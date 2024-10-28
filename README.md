@@ -97,9 +97,11 @@ The **MAIN** program in the TwinCAT project is defined as follows:
 ```iec-st
 PROGRAM MAIN
 VAR
-    nValue  : DINT      := 42;
-    fValue  : LREAL     := 273.15;
-    stValue : ST_Value  := (bValue := TRUE, sValue := 'Hello there!');
+    nValue 	: DINT 					:= 42;
+    fValue 	: LREAL 				:= 3.14;
+    arValue : ARRAY[0..3] OF LREAL 	:= [273.15, 2.71, 9.80665];
+    eValue 	: E_Value 				:= E_Value.Winter;
+    stValue : ST_Value 				:= (bValue := TRUE, sValue := 'Hello there!');
     fbValue : FB_Value;
 END_VAR
 ```
@@ -108,8 +110,26 @@ We’ll be interacting with four symbols, each representing different data types
 
 1. **`nValue`**: A basic integer type.
 2. **`fValue`**: A floating-point value (LREAL).
-3. **`stValue`**: A structured type that we’ll define below.
-4. **`fbValue`**: A function block that includes an RPC method and a property.
+3. **`arValue`**: An array containing floating-point numbers (LREAL).
+4. **`eValue`**: An enumeration.
+5. **`stValue`**: A structured type that we’ll define below.
+6. **`fbValue`**: A function block that includes an RPC method and a property.
+
+### Enumeration Definition: `E_Value`
+
+The `eValue` variable is an instance of type `E_Value`, an enumeration that represents seasons. Here’s its definition:
+
+```iec-st
+TYPE E_Value :
+(
+    _ := 0,
+    Summer,
+    Autumn,
+    Winter,
+    Spring
+);
+END_TYPE
+```
 
 ### Struct Definition: `ST_Value`
 
