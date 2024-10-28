@@ -99,8 +99,8 @@ PROGRAM MAIN
 VAR
     nValue 	: DINT 					:= 42;
     fValue 	: LREAL 				:= 3.14;
-    arValue : ARRAY[0..3] OF LREAL 	:= [273.15, 2.71, 9.80665];
     eValue 	: E_Value 				:= E_Value.Winter;
+    arValue : ARRAY[0..3] OF LREAL 	:= [273.15, 2.71, 9.80665];
     stValue : ST_Value 				:= (bValue := TRUE, sValue := 'Hello there!');
     fbValue : FB_Value;
 END_VAR
@@ -110,8 +110,8 @@ We’ll be interacting with four symbols, each representing different data types
 
 1. **`nValue`**: A basic integer type.
 2. **`fValue`**: A floating-point value (LREAL).
-3. **`arValue`**: An array containing floating-point numbers (LREAL).
-4. **`eValue`**: An enumeration.
+3. **`eValue`**: An enumeration.
+4. **`arValue`**: An array containing floating-point numbers (LREAL).
 5. **`stValue`**: A structured type that we’ll define below.
 6. **`fbValue`**: A function block that includes an RPC method and a property.
 
@@ -127,7 +127,7 @@ TYPE E_Value :
     Autumn,
     Winter,
     Spring
-);
+)UINT;
 END_TYPE
 ```
 
@@ -302,3 +302,52 @@ Press any key to exit...
 ```
 
 Now that we've set the foundation for interacting with our symbols. We’re now ready to explore reading, writing, and invoking methods on these dynamic objects for real-world usage.
+
+## Reading Values from PLC Symbols
+
+Now that we know how to access symbols, we can begin reading their values. This section demonstrates how to retrieve the values of symbols in the **MAIN** program using the dynamic symbol loader.
+
+### Reading Primitives
+
+Primitive types, such as booleans, integers, floating-point numbers, etc. are instances of the [DynamicSymbol](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409775371.html?id=8821441701441924477) class. To read their values, simply call the `ReadValue()` method. You can assign the output directly to a typed variable, ensuring type safety and optimising performance by reducing round-trip calls to the PLC.
+
+It's important to note that the names of the dynamic symbols must match those in the PLC program. For example, the symbol `"MAIN.nValue"` in the PLC can be accessed as `MAIN.nValue` in your .NET code.
+
+Here’s an example of how to access primitive values:
+
+```cs
+dynamic MAIN = symbols["MAIN"];
+
+int plcIntValue = MAIN.nValue.ReadValue();
+double plcDblValue = MAIN.fValue.ReadValue();
+```
+
+### Reading Enums
+
+Enums are also instances of the `DynamicSymbol` class. When you call the `ReadValue()` method on an enum, it can return various underlying types, such as `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, or `ulong`. For consistency and to avoid type mismatch errors, it’s best to explicitly specify the underlying type in the PLC when defining enums. Here’s an example of a typed enum definition:
+
+```iec-st
+TYPE E_Value :
+(
+	_ := 0,
+	Summer,
+	Autumn,
+	Winter,
+	Spring
+) BYTE;
+END_TYPE
+```
+
+Note the `BYTE` type at the end of the declaration, which clarifies the underlying type.
+
+To read the value of an enum in .NET:
+
+```cs
+byte plcEnumValue = MAIN.eValue.ReadValue();
+```
+
+If you want to retrieve the names of the enum members, use the `DataType` property of the `DynamicSymbol` class, which returns an `IEnumType` interface. You can then call `GetNames()` to get the member names in the order they’re declared in the PLC:
+
+```cs
+string[] enumNames = MAIN.eValue.DataType.GetNames();
+```
