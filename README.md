@@ -346,7 +346,7 @@ To read the value of an enum in .NET:
 byte plcEnumValue = MAIN.eValue.ReadValue();
 ```
 
-If you want to retrieve the names of the enum members, use the `DataType` property of the `DynamicSymbol` class, which returns an `IEnumType` interface. You can then call `GetNames()` to get the member names in the order they’re declared in the PLC:
+If you want to retrieve the names of the enum members, use the `DataType` property of the `DynamicSymbol` class, which returns an [IEnumType](https://infosys.beckhoff.com/content/1033/tcadsnetref/7314516107.html?id=5847315386802257082) interface. You can then call `GetNames()` to get the member names in the order they’re declared in the PLC:
 
 ```cs
 string[] enumNames = MAIN.eValue.DataType.GetNames();
