@@ -97,12 +97,13 @@ The **MAIN** program in the TwinCAT project is defined as follows:
 ```iec-st
 PROGRAM MAIN
 VAR
-    nValue 	: DINT 					:= 42;
-    fValue 	: LREAL 				:= 3.14;
-    eValue 	: E_Value 				:= E_Value.Winter;
-    arValue : ARRAY[0..3] OF LREAL 	:= [273.15, 2.71, 9.80665];
-    stValue : ST_Value 				:= (bValue := TRUE, sValue := 'Hello there!');
+    nValue 	: DINT                  := 42;
+    fValue 	: LREAL                 := 3.14;
+    eValue 	: E_Value               := E_Value.Winter;
+    arValue : ARRAY[0..3] OF LREAL  := [273.15, 2.71, 9.80665];
+    stValue : ST_Value              := (bValue := TRUE, sValue := 'Hello there!');
     fbValue : FB_Value;
+    ipValue : I_Value               := fbValue; 
 END_VAR
 ```
 
@@ -114,6 +115,7 @@ We’ll be interacting with four symbols, each representing different data types
 4. **`arValue`**: An array containing floating-point numbers (LREAL).
 5. **`stValue`**: A structured type that we’ll define below.
 6. **`fbValue`**: A function block that includes an RPC method and a property.
+7. **`ipValue`**: An interface that includes an RPC method.
 
 ### Enumeration Definition: `E_Value`
 
@@ -146,9 +148,29 @@ END_TYPE
 
 The struct `ST_Value` contains a boolean (`bValue`) and a string (`sValue`). These members allow us to test interactions with complex data types.
 
+### Interface Definition: `I_Value`
+
+The `I_Value` interface defines a method that will enable Remote Procedure Call (RPC) access. Here’s the definition:
+
+```iec-st
+INTERFACE I_Value
+{attribute 'TcRpcEnable'}
+METHOD Sum : LREAL
+VAR_INPUT
+    fA, fB : LREAL;
+END_VAR
+VAR_OUTPUT
+    sMessage : STRING;
+END_VAR
+END_METHOD
+END_INTERFACE
+```
+
+The `Sum` method is enabled for RPC through the `{attribute 'TcRpcEnable'}` pragma, allowing it to be called remotely via ADS. This method takes two `LREAL` inputs and returns a sum along with a descriptive message in `sMessage`.
+
 ### Function Block Definition: `FB_Value`
 
-The `fbValue` variable is an instance of the function block `FB_Value`. This block demonstrates remote procedure calls (RPC) and property access through ADS. 
+The `fbValue` variable is an instance of the function block `FB_Value` which implements the `I_Value` interface. This function block demonstrates remote procedure calls (RPC) and property access through ADS. 
 
 The function block `FB_Value` includes:
 
@@ -166,19 +188,19 @@ END_VAR
 {attribute 'TcRpcEnable'}
 METHOD Sum : LREAL
 VAR_INPUT
-   fA, fB : LREAL;
+    fA, fB : LREAL;
 END_VAR
 VAR_OUTPUT
-   sMessage : STRING;
+    sMessage : STRING;
 END_VAR
-   Sum := fA + fB;
-   sMessage := 
-      CONCAT('The sum of ', 
-      CONCAT(TO_STRING(fA),
-      CONCAT(' and ', 
-      CONCAT(TO_STRING(fB), 
-      CONCAT(' is ', TO_STRING(Sum)
-   )))));
+    Sum := fA + fB;
+    sMessage := 
+        CONCAT('The sum of ', 
+        CONCAT(TO_STRING(fA),
+        CONCAT(' and ', 
+        CONCAT(TO_STRING(fB), 
+        CONCAT(' is ', TO_STRING(Sum)
+    )))));
 END_METHOD
 
 {attribute 'monitoring' := 'call'}
@@ -206,8 +228,10 @@ Now that we’ve established a connection, we can start interacting with our PLC
 The following code uses the [SymbolLoaderFactory](https://infosys.beckhoff.com/content/1031/tcadsnetref/7313976459.html?id=3714501762720183437) to create an [IDynamicSymbolLoader](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9410088715.html?id=2842232253864591757). This loader provides access to a [DynamicSymbolsCollection](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409856267.html?id=8767024214869055963), which holds all the symbols available in the PLC:
 
 ```cs
-var symbolLoader = (IDynamicSymbolLoader)SymbolLoaderFactory.Create(
-    client, new SymbolLoaderSettings(SymbolsLoadMode.DynamicTree)
+var symbolLoader = (IDynamicSymbolLoader)SymbolLoaderFactory.Create
+(
+    client,
+    new SymbolLoaderSettings(SymbolsLoadMode.DynamicTree)
 );
 var symbols = (DynamicSymbolsCollection)symbolLoader.SymbolsDynamic;
 ```
@@ -267,8 +291,10 @@ using TwinCAT.TypeSystem;
 using (AdsClient client = new())
 {
     client.Connect(AmsNetId.Local, 851);
-    var symbolLoader = (IDynamicSymbolLoader)SymbolLoaderFactory.Create(
-        client, new SymbolLoaderSettings(SymbolsLoadMode.DynamicTree)
+    var symbolLoader = (IDynamicSymbolLoader)SymbolLoaderFactory.Create
+    (
+        client,
+        new SymbolLoaderSettings(SymbolsLoadMode.DynamicTree)
     );
     var symbols = (DynamicSymbolsCollection)symbolLoader.SymbolsDynamic;
 
@@ -276,7 +302,8 @@ using (AdsClient client = new())
     Console.WriteLine();
 
     dynamic MAIN = symbols["MAIN"];
-    foreach (dynamic symbol in MAIN.SubSymbols) Console.WriteLine(symbol.InstancePath);
+    foreach (dynamic symbol in MAIN.SubSymbols)
+        Console.WriteLine(symbol.InstancePath);
 
     Console.WriteLine("\nPress any key to exit...\n");
     Console.ReadKey(true);
@@ -293,8 +320,11 @@ Global_Version
 MAIN
 TwinCAT_SystemInfoVarList
 
+MAIN.arValue
+MAIN.eValue
 MAIN.fbValue
 MAIN.fValue
+MAIN.ipValue
 MAIN.nValue
 MAIN.stValue
 
@@ -329,11 +359,11 @@ Enums are also instances of the `DynamicSymbol` class. When you call the `ReadVa
 ```iec-st
 TYPE E_Value :
 (
-	_ := 0,
-	Summer,
-	Autumn,
-	Winter,
-	Spring
+    _ := 0,
+    Summer,
+    Autumn,
+    Winter,
+    Spring
 ) BYTE;
 END_TYPE
 ```
