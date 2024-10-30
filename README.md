@@ -272,8 +272,11 @@ foreach (dynamic symbol in MAIN.SubSymbols) Console.WriteLine(symbol.InstancePat
 With the TwinCAT project configured as described in the previous section, the output should resemble:
 
 ```console
+MAIN.arValue
+MAIN.eValue
 MAIN.fbValue
 MAIN.fValue
+MAIN.ipValue
 MAIN.nValue
 MAIN.stValue
 ```
@@ -333,17 +336,17 @@ Press any key to exit...
 
 Now that we've set the foundation for interacting with our symbols. We’re now ready to explore reading, writing, and invoking methods on these dynamic objects for real-world usage.
 
-## Reading Values from PLC Symbols
+## Reading and Writing Values from PLC Symbols
 
-Now that we know how to access symbols, we can begin reading their values. This section demonstrates how to retrieve the values of symbols in the **MAIN** program using the dynamic symbol loader.
+Now that we can access symbols, let’s explore how to retrieve and set their values in the **MAIN** program using the dynamic symbol loader. It’s essential that the names of dynamic symbols in .NET match those in the PLC program. For instance, the symbol `"MAIN.nValue"` in the PLC is accessed as `MAIN.nValue` in .NET.
 
-### Reading Primitives
+This section demonstrates how to read and write values of various symbol types, starting with primitive types.
 
-Primitive types, such as booleans, integers, floating-point numbers, etc. are instances of the [DynamicSymbol](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409775371.html?id=8821441701441924477) class. To read their values, simply call the `ReadValue()` method. You can assign the output directly to a typed variable, ensuring type safety and optimising performance by reducing round-trip calls to the PLC.
+### Primitives
 
-It's important to note that the names of the dynamic symbols must match those in the PLC program. For example, the symbol `"MAIN.nValue"` in the PLC can be accessed as `MAIN.nValue` in your .NET code.
+Primitive types, such as booleans, integers, and floating-point numbers, are represented by instances of the [DynamicSymbol](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409775371.html?id=8821441701441924477) class. To read their values, simply call the `ReadValue()` method. You can assign this output to a typed variable to ensure type safety and optimize performance by minimizing round-trip calls to the PLC. To modify values, use the `WriteValue(Object)` method, passing the new value as a parameter.
 
-Here’s an example of how to access primitive values:
+Here’s how to read primitive values:
 
 ```cs
 dynamic MAIN = symbols["MAIN"];
@@ -352,9 +355,16 @@ int plcIntValue = MAIN.nValue.ReadValue();
 double plcDblValue = MAIN.fValue.ReadValue();
 ```
 
-### Reading Enums
+And here’s how to update these values:
 
-Enums are also instances of the `DynamicSymbol` class. When you call the `ReadValue()` method on an enum, it can return various underlying types, such as `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, or `ulong`. For consistency and to avoid type mismatch errors, it’s best to explicitly specify the underlying type in the PLC when defining enums. Here’s an example of a typed enum definition:
+```cs
+MAIN.nValue.WriteValue(88);
+MAIN.fValue.WriteValue(6.626);
+```
+
+### Enums
+
+Enums in the PLC, like primitives, are instances of the [DynamicSymbol](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409775371.html?id=8821441701441924477) class. To read an enum's value, call the `ReadValue()` method. Since enums in the PLC are represented by their underlying integer type (e.g., `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, or `ulong`), it’s recommended to specify the enum’s numeric type in your PLC code to ensure type consistency:
 
 ```iec-st
 TYPE E_Value :
@@ -364,20 +374,47 @@ TYPE E_Value :
     Autumn,
     Winter,
     Spring
-) BYTE;
+) UINT;
 END_TYPE
 ```
 
-Note the `BYTE` type at the end of the declaration, which clarifies the underlying type.
-
-To read the value of an enum in .NET:
+This lets you safely cast the enum to the correct numeric type in .NET:
 
 ```cs
-byte plcEnumValue = MAIN.eValue.ReadValue();
+dynamic MAIN = symbols["MAIN"];
+ushort plcEnumValue = (ushort)MAIN.eValue.ReadValue();
 ```
 
-If you want to retrieve the names of the enum members, use the `DataType` property of the `DynamicSymbol` class, which returns an [IEnumType](https://infosys.beckhoff.com/content/1033/tcadsnetref/7314516107.html?id=5847315386802257082) interface. You can then call `GetNames()` to get the member names in the order they’re declared in the PLC:
+#### Writing Enums
+
+To write a value to an enum, use the `WriteValue(Object)` method, passing either the numeric value directly or the converted integer representation of the enum.
+
+For instance, to set `eValue` to `Autumn`, which has the value `2` in the PLC, you can write directly as follows:
 
 ```cs
-string[] enumNames = MAIN.eValue.DataType.GetNames();
+MAIN.eValue.WriteValue(2);
 ```
+
+Alternatively, to convert an enum member name to its corresponding numeric value, use the [`IDataTypeCollection`](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9410065163.html?id=5972020133665255142) and [`IEnumType`](https://infosys.beckhoff.com/content/1033/tcadsnetref/7314516107.html?id=5847315386802257082) features:
+
+```cs
+var enumType = (IEnumType)symbolLoader.DataTypes["E_Value"];
+var enumValue = (ushort)enumType.Parse("Autumn");
+MAIN.eValue.WriteValue(enumValue);
+```
+
+#### Retrieving Enum Names and Values
+
+The `IEnumType` interface allows you to retrieve both the names and numeric values of enum members:
+
+- **Names**: Use `GetNames()` to get an array of all enum names:
+    ```cs
+    string[] enumNames = enumType.GetNames();
+    ```
+
+- **Values**: Use `GetValues()` to get an array of all enum values, returned as `IConvertible[]`:
+    ```cs
+    IConvertible[] enumValues = enumType.GetValues();
+    ```
+
+### Arrays
