@@ -100,7 +100,7 @@ VAR
     nValue  : DINT                  := 42;
     fValue  : LREAL                 := 3.14;
     eValue  : E_Value               := E_Value.Winter;
-    arValue : ARRAY[0..3] OF LREAL  := [273.15, 2.71, 9.80665];
+    arValue : ARRAY[0..2] OF LREAL  := [273.15, 2.71, 9.80665];
     stValue : ST_Value              := (bValue := TRUE, sValue := 'Hello there!');
     fbValue : FB_Value;
     ipValue : I_Value               := fbValue; 
