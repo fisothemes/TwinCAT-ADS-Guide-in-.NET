@@ -385,8 +385,6 @@ dynamic MAIN = symbols["MAIN"];
 ushort plcEnumValue = (ushort)MAIN.eValue.ReadValue();
 ```
 
-#### Writing Enums
-
 To write a value to an enum, use the `WriteValue(Object)` method, passing either the numeric value directly or the converted integer representation of the enum.
 
 For instance, to set `eValue` to `Autumn`, which has the value `2` in the PLC, you can write directly as follows:
@@ -403,8 +401,6 @@ var enumValue = (ushort)enumType.Parse("Autumn");
 MAIN.eValue.WriteValue(enumValue);
 ```
 
-#### Retrieving Enum Names and Values
-
 The `IEnumType` interface allows you to retrieve both the names and numeric values of enum members:
 
 - **Names**: Use `GetNames()` to get an array of all enum names:
@@ -418,3 +414,69 @@ The `IEnumType` interface allows you to retrieve both the names and numeric valu
     ```
 
 ### Arrays
+
+Arrays in ADS are represented as instances of the [DynamicArrayInstance](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409694475.html?id=6573674385667625432) class, allowing both read and write operations on individual elements or the entire array.
+
+To read the complete contents of an array, call the `ReadValue()` method:
+
+```cs
+dynamic MAIN = symbols["MAIN"];
+double[] plcDblArray = MAIN.arValue.ReadValue();
+```
+
+To read a single element in an array, you have several options. Each of these methods retrieves the value of the first element:
+
+```cs
+MAIN.arValue[0].ReadValue();
+MAIN.arValue.Elements[0].ReadValue();
+MAIN.arValue.SubSymbols[0].ReadValue();
+```
+
+The first method (`MAIN.arValue[0]`) is recommended, especially for multidimensional arrays, as it simplifies syntax.
+
+Writing to a single array element is straightforward with the `WriteValue(Object)` method:
+
+```cs
+MAIN.arValue[0].WriteValue(6.626);
+```
+
+Attempting to write directly to an entire array using `WriteValue(Object)` will result in an error. Here’s an example that produces an `ArgumentOutOfRangeException`:
+
+```cs
+MAIN.arValue.WriteValue(new double[] { 1.602, 6.022, 1.380 });
+```
+
+The error is due to the current limitation of `WriteValue(Object)` on array symbols. Instead, each element must be updated individually, as shown below:
+
+```cs
+double[] newValues = { 1.602, 6.022, 1.380 };
+for (int i = 0; i < Math.Min(newValues.Length, MAIN.arValue.Elements.Count); i++)
+    MAIN.arValue[i].WriteValue(newValues[i]);
+```
+
+While this method works reliably, it isn’t the most efficient way to write to an array, as it involves multiple write operations to individual elements. However, this is currently the only available approach. If you believe this limitation is a bug, consider reaching out to Beckhoff Technical Support for further assistance.
+
+> **Tip:** For multidimensional arrays, extend this approach by nesting loops for each dimension.
+
+The IEC-61131-3 standard allows for arrays with custom, non-zero-based bounds. To read and write to elements in non-zero-based arrays, use their specified indices:
+
+```cs
+double plcArrayValue = MAIN.arNewValues[-1].ReadValue();
+MAIN.arNewValues[-1].WriteValue(10_973_731.568160);
+```
+
+The `Dimensions` property provides valuable metadata about an array, including bounds, dimensions, lengths, and if it’s non-zero-based:
+
+```cs
+int[] lowerBounds = MAIN.arValue.Dimensions.LowerBounds;
+int[] upperBounds = MAIN.arValue.Dimensions.UpperBounds;
+int numOfDimensions = MAIN.arValue.Dimensions.Count;
+int[] dimensionLengths = MAIN.arValue.Dimensions.GetDimensionLengths();
+bool isNonZeroBased = MAIN.arValue.Dimensions.IsNonZeroBased;
+
+foreach (var dim in MAIN.arValue.Dimensions) Console.WriteLine(dim.ElementCount);
+```
+
+The `Dimensions` property is especially useful for handling complex arrays, offering flexibility when working with arrays of various sizes and bounds.
+
+### Structs
