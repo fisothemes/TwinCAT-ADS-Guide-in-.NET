@@ -233,6 +233,7 @@ var symbolLoader = (IDynamicSymbolLoader)SymbolLoaderFactory.Create
     client,
     new SymbolLoaderSettings(SymbolsLoadMode.DynamicTree)
 );
+
 var symbols = (DynamicSymbolsCollection)symbolLoader.SymbolsDynamic;
 ```
 
@@ -260,13 +261,17 @@ To access our **MAIN** program symbol, use the following code:
 ```cs
 dynamic MAIN = symbols["MAIN"];
 ```
+Alternatively, you can write:
 
+```cs
+dynamic MAIN = symbols.MAIN;
+```
 Using the DLR, we create a `DynamicSymbol` object representing `MAIN`. Keep in mind that, since this is a dynamic type, IntelliSense won’t provide property or method suggestions. You may need to refer to the [DynamicSymbol documentation](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409775371.html?id=8821441701441924477) as you work.
 
 To see all the sub-symbols under `MAIN`, we can use the `SubSymbols` property. Here’s how:
 
 ```cs
-foreach (dynamic symbol in MAIN.SubSymbols) Console.WriteLine(symbol.InstancePath);
+foreach (var symbol in MAIN.SubSymbols) Console.WriteLine(symbol.InstancePath);
 ```
 
 With the TwinCAT project configured as described in the previous section, the output should resemble:
@@ -299,14 +304,15 @@ using (AdsClient client = new())
         client,
         new SymbolLoaderSettings(SymbolsLoadMode.DynamicTree)
     );
+
     var symbols = (DynamicSymbolsCollection)symbolLoader.SymbolsDynamic;
 
     foreach (var symbol in symbols) Console.WriteLine(symbol.InstancePath);
     Console.WriteLine();
 
     dynamic MAIN = symbols["MAIN"];
-    foreach (dynamic symbol in MAIN.SubSymbols)
-        Console.WriteLine(symbol.InstancePath);
+    
+    foreach (var symbol in MAIN.SubSymbols) Console.WriteLine(symbol.InstancePath);
 
     Console.WriteLine("\nPress any key to exit...\n");
     Console.ReadKey(true);
@@ -480,3 +486,40 @@ foreach (var dim in MAIN.arValue.Dimensions) Console.WriteLine(dim.ElementCount)
 The `Dimensions` property is especially useful for handling complex arrays, offering flexibility when working with arrays of various sizes and bounds.
 
 ### Structs
+
+Structs in ADS are represented as instances of the [DynamicStructInstance](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409764107.html?id=6274677468644360560) class. Like arrays, structs support both reading and writing operations on individual members or the entire structure.
+
+To read all members of a struct at once, use the `ReadValue()` method:
+
+```cs
+dynamic MAIN = symbols["MAIN"];
+dynamic plcStructValue = MAIN.stValue.ReadValue();
+```
+
+You can access individual members of the struct using their names:
+
+```cs
+bool plcBoolValue = MAIN.stValue.bValue.ReadValue();
+string plcStrValue = MAIN.stValue.sValue.ReadValue();
+```
+
+To write to individual struct members, use the `WriteValue(Object)` method:
+
+```cs
+MAIN.stValue.bValue.WriteValue(false);
+MAIN.stValue.sValue.WriteValue("General Kenobi!");
+```
+Attempting to write to an entire struct at once using an anonymous type or object, like in the code below, will raise an error:
+
+```cs
+// This produces an error: "Struct member 'bValue' (of ValueType: <>f__AnonymousType0`2) not found!"
+MAIN.stValue.WriteValue(new
+{
+    bValue = true,
+    sValue = "Another happy landing!"
+});
+```
+
+The error is due to the `DynamicValueMarshaler` expecting a `DynamicValue` or a recognised ADS structure type rather than a .NET anonymous object. If you believe that writing the entire struct at once should be supported, consider reaching out to Beckhoff Technical Support, as this may be a limitation in the ADS .NET library rather than intended behaviour. Additionally, feel free to submit a pull request to improve this guide if you have an alternative solution or clarification that could benefit other developers.
+
+### Function Blocks
