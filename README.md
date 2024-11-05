@@ -523,3 +523,27 @@ MAIN.stValue.WriteValue(new
 The error is due to the `DynamicValueMarshaler` expecting a `DynamicValue` or a recognised ADS structure type rather than a .NET anonymous object. If you believe that writing the entire struct at once should be supported, consider reaching out to Beckhoff Technical Support, as this may be a limitation in the ADS .NET library rather than intended behaviour. Additionally, feel free to submit a pull request to improve this guide if you have an alternative solution or clarification that could benefit other developers.
 
 ### Function Blocks
+
+Function blocks can be accessed similarly to structs, which means local variables and properties with the `{attribute 'monitoring' := 'call'}` pragma can be accessed like struct members. If properties include code within their getter or setter blocks, that code will be executed when the property is read or written to.
+
+The following code demonstrates how to read local variables and properties from a function block:
+
+```cs
+dynamic MAIN = symbols["MAIN"];
+
+// Reading a local variable
+double localValue = MAIN.fbValue._fValue.ReadValue();
+// Reading a property
+double propValue = MAIN.fbValue.Value.ReadValue();
+```
+
+To write values to properties and local variables, you can use:
+
+```cs
+// Writing to a local variable
+MAIN.fbValue._fValue.WriteValue(2001);
+// Writing to a property
+MAIN.fbValue.Value.WriteValue(66);
+```
+
+> **Note:** Writing to the `Value` property will store double the value due to the custom setter logic in the `FB_Value` function block.
