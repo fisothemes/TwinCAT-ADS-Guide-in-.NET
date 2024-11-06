@@ -225,7 +225,7 @@ Now that we’ve established a connection, we can start interacting with our PLC
 
 ### Loading Symbols with the Dynamic Symbol Loader
 
-The following code uses the [SymbolLoaderFactory](https://infosys.beckhoff.com/content/1031/tcadsnetref/7313976459.html?id=3714501762720183437) to create an [IDynamicSymbolLoader](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9410088715.html?id=2842232253864591757). This loader provides access to a [DynamicSymbolsCollection](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409856267.html?id=8767024214869055963), which holds all the symbols available in the PLC:
+The following code uses the [`SymbolLoaderFactory`](https://infosys.beckhoff.com/content/1031/tcadsnetref/7313976459.html?id=3714501762720183437) to create an [`IDynamicSymbolLoader`](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9410088715.html?id=2842232253864591757). This loader provides access to a [`DynamicSymbolsCollection`](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409856267.html?id=8767024214869055963), which holds all the symbols available in the PLC:
 
 ```cs
 var symbolLoader = (IDynamicSymbolLoader)SymbolLoaderFactory.Create
@@ -266,7 +266,7 @@ Alternatively, you can write:
 ```cs
 dynamic MAIN = symbols.MAIN;
 ```
-Using the DLR, we create a `DynamicSymbol` object representing `MAIN`. Keep in mind that, since this is a dynamic type, IntelliSense won’t provide property or method suggestions. You may need to refer to the [DynamicSymbol documentation](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409775371.html?id=8821441701441924477) as you work.
+Using the DLR, we create a `DynamicSymbol` object representing `MAIN`. Keep in mind that, since this is a dynamic type, IntelliSense won’t provide property or method suggestions. You may need to refer to the [`DynamicSymbol` documentation](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409775371.html?id=8821441701441924477) as you work.
 
 To see all the sub-symbols under `MAIN`, we can use the `SubSymbols` property. Here’s how:
 
@@ -350,7 +350,7 @@ This section demonstrates how to read and write values of various symbol types, 
 
 ### Primitives
 
-Primitive types, such as booleans, integers, and floating-point numbers, are represented by instances of the [DynamicSymbol](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409775371.html?id=8821441701441924477) class. To read their values, simply call the `ReadValue()` method. You can assign this output to a typed variable to ensure type safety and optimize performance by minimizing round-trip calls to the PLC. To modify values, use the `WriteValue(Object)` method, passing the new value as a parameter.
+Primitive types, such as booleans, integers, and floating-point numbers, are represented by instances of the [`DynamicSymbol`](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409775371.html?id=8821441701441924477) class. To read their values, simply call the `ReadValue()` method. You can assign this output to a typed variable to ensure type safety and optimize performance by minimizing round-trip calls to the PLC. To modify values, use the `WriteValue(Object)` method, passing the new value as a parameter.
 
 Here’s how to read primitive values:
 
@@ -370,7 +370,7 @@ MAIN.fValue.WriteValue(6.626);
 
 ### Enums
 
-Enums in the PLC, like primitives, are instances of the [DynamicSymbol](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409775371.html?id=8821441701441924477) class. To read an enum's value, call the `ReadValue()` method. Since enums in the PLC are represented by their underlying integer type (e.g., `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, or `ulong`), it’s recommended to specify the enum’s numeric type in your PLC code to ensure type consistency:
+Enums in the PLC, like primitives, are instances of the [`DynamicSymbol`](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409775371.html?id=8821441701441924477) class. To read an enum's value, call the `ReadValue()` method. Since enums in the PLC are represented by their underlying integer type (e.g., `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, or `ulong`), it’s recommended to specify the enum’s numeric type in your PLC code to ensure type consistency:
 
 ```iec-st
 TYPE E_Value :
@@ -421,7 +421,7 @@ The `IEnumType` interface allows you to retrieve both the names and numeric valu
 
 ### Arrays
 
-Arrays in ADS are represented as instances of the [DynamicArrayInstance](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409694475.html?id=6573674385667625432) class, allowing both read and write operations on individual elements or the entire array.
+Arrays in ADS are represented as instances of the [`DynamicArrayInstance`](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409694475.html?id=6573674385667625432) class, allowing both read and write operations on individual elements or the entire array.
 
 To read the complete contents of an array, call the `ReadValue()` method:
 
@@ -487,7 +487,7 @@ The `Dimensions` property is especially useful for handling complex arrays, offe
 
 ### Structs
 
-Structs in ADS are represented as instances of the [DynamicStructInstance](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409764107.html?id=6274677468644360560) class. Like arrays, structs support both reading and writing operations on individual members or the entire structure.
+Structs in ADS are represented as instances of the [`DynamicStructInstance`](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409764107.html?id=6274677468644360560) class. Like arrays, structs support both reading and writing operations on individual members or the entire structure.
 
 To read all members of a struct at once, use the `ReadValue()` method:
 
@@ -547,3 +547,65 @@ MAIN.fbValue.Value.WriteValue(66);
 ```
 
 > **Note:** Writing to the `Value` property will store double the value due to the custom setter logic in the `FB_Value` function block.
+
+## Handling Events
+
+In addition to reading and writing PLC symbols, you may need to respond to changes in the ADS client’s state or track updates to specific symbol values dynamically. The TwinCAT ADS .NET library provides several built-in events that allow you to do just that. This section demonstrates how to handle connection state changes, monitor ADS state transitions, and listen for updates to symbol values.
+
+### Monitoring Connection State Changes
+
+The [`ConnectionStateChanged`](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9407908619.html) event allows you to track changes in the connection status of the ADS client. This is important for managing connectivity and taking appropriate actions when the connection to the PLC changes (e.g., when the connection is established or lost).
+
+> **Note:** The connection state will only change when the client connects to or disconnects from the PLC, or if active communication is triggered by the user.
+
+**Example Code:**
+```cs
+var connectionStateChangedHandler = new EventHandler<ConnectionStateChangedEventArgs>
+(
+    (sender, e) =>
+    {
+        Console.WriteLine($"The client connection state is {e.NewState}.");
+    }
+);
+
+client.ConnectionStateChanged += connectionStateChangedHandler;
+```
+
+### Listening to ADS State Changes
+
+The [`AdsStateChanged`](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9407905547.html) event enables you to monitor when the ADS client transitions between different operational states. This is useful for detecting changes in the PLC’s operational status, such as when it switches from `Run` to `Stop`. We’ll add an example of how to subscribe to this event shortly.
+
+**Example Code:**
+```cs
+// coming soon...
+```
+
+### Listening for Value Changes in Symbols
+
+One of the most valuable features of the ADS client is the ability to track real-time updates to PLC symbols via the [`ValueChanged`](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409850123.html) event. This event notifies you whenever a subscribed symbol’s value changes, making it essential for applications that need to respond to dynamic data.
+
+**Example Code:**
+```cs
+var valueChangedHandler = new EventHandler<ValueChangedEventArgs>
+(
+    (sender, e) =>
+    {
+        dynamic val = e.Value;
+        Console.WriteLine(
+            "Value of " + e.Symbol.InstancePath + " changed to " +
+            (e.Symbol.IsPrimitiveType ? val : JsonConvert.SerializeObject(val))
+        );
+    }
+);
+
+MAIN.fValue.ValueChanged += valueChangedHandler;
+MAIN.stValue.ValueChanged += valueChangedHandler;
+```
+
+### Best Practices for Event Handling
+
++ **Minimise Processing in Handlers:** Keep event handlers lightweight to avoid performance bottlenecks. Offload intensive tasks to a separate thread or process if necessary.
+  
++ **Unsubscribe Appropriately:** Always unsubscribe from events when they are no longer needed to prevent memory leaks.
+
++ **Ensure Thread Safety:** If your application is multi-threaded, make sure event handlers are thread-safe and can handle concurrent updates properly.
