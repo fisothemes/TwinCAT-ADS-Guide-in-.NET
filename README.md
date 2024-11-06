@@ -573,11 +573,23 @@ client.ConnectionStateChanged += connectionStateChangedHandler;
 
 ### Listening to ADS State Changes
 
-The [`AdsStateChanged`](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9407905547.html) event enables you to monitor when the ADS client transitions between different operational states. This is useful for detecting changes in the PLC’s operational status, such as when it switches from `Run` to `Stop`. We’ll add an example of how to subscribe to this event shortly.
+The [`AdsStateChanged`](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9407905547.html) event enables you to monitor when the ADS client transitions between different operational states. This event is useful for tracking the ADS state transitions and responding to conditions where the client moves between states like `Run`, `Stop`, or `Error`.
 
 **Example Code:**
 ```cs
-// coming soon...
+var adsStateChangedHandler = new EventHandler<AdsStateChangedEventArgs>
+(
+    (sender, e) =>
+    {
+        Console.WriteLine
+        (
+            $"ADS state changed. New state: {e.State.AdsState}, " +
+            $"Device state: {e.State.DeviceState}"
+        );
+    }
+);
+
+client.AdsStateChanged += adsStateChangedHandler;
 ```
 
 ### Listening for Value Changes in Symbols
@@ -591,7 +603,8 @@ var valueChangedHandler = new EventHandler<ValueChangedEventArgs>
     (sender, e) =>
     {
         dynamic val = e.Value;
-        Console.WriteLine(
+        Console.WriteLine
+        (
             "Value of " + e.Symbol.InstancePath + " changed to " +
             (e.Symbol.IsPrimitiveType ? val : JsonConvert.SerializeObject(val))
         );
