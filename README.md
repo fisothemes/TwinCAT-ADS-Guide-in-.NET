@@ -605,7 +605,7 @@ var valueChangedHandler = new EventHandler<ValueChangedEventArgs>
         dynamic val = e.Value;
         Console.WriteLine
         (
-            "Value of " + e.Symbol.InstancePath + " changed to " +
+            $"Value of {e.Symbol.InstancePath} changed to " +
             (e.Symbol.IsPrimitiveType ? val : JsonConvert.SerializeObject(val))
         );
     }
@@ -622,3 +622,79 @@ MAIN.stValue.ValueChanged += valueChangedHandler;
 + **Unsubscribe Appropriately:** Always unsubscribe from events when they are no longer needed to prevent memory leaks.
 
 + **Ensure Thread Safety:** If your application is multi-threaded, make sure event handlers are thread-safe and can handle concurrent updates properly.
+
+
+## Remote Procedure Calls (RPCs)
+
+You can perform Remote Procedure Calls (RPCs) on PLC function blocks and interfaces. This is useful when working with structured data or methods that encapsulate business logic in the PLC.
+
+As discussed previously, function blocks in the ADS .NET library are represented as [`DynamicStructInstance`](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409764107.html?id=6274677468644360560), while interfaces are represented as [`DynamicInterfaceInstance`](https://infosys.beckhoff.com/content/1033/tc3_ads.net/12395675659.html?id=7340312406529576735). `DynamicStructInstance` inherits from `DynamicInterfaceInstance`, giving both classes shared access to RPC-related properties and methods.
+
+### Checking for RPC Methods
+
+`DynamicInterfaceInstance` and `DynamicStructInstance` expose an `HasRpcMethods` property, which indicates if an RPC method is available. This is helpful for confirming if a PLC symbol has RPC support before invoking any methods.
+
+**Example Code:**
+```cs
+var formatYesNoResponse = (bool answer) => answer ? "Yes" : "No";
+
+Console.WriteLine
+(
+    $"Does {MAIN.fbValue.InstancePath} have RPC methods?: " +
+    formatYesNoResponse(MAIN.fbValue.HasRpcMethods)
+);
+
+Console.WriteLine
+(
+    $"Does {MAIN.ipValue.InstancePath} have RPC methods?: " +
+    formatYesNoResponse(MAIN.ipValue.HasRpcMethods)
+);
+```
+
+### Listing Available RPC Methods
+
+If a PLC symbol has RPC methods, you can access them using the `RpcMethods` property. This property returns an [`IRpcMethodCollection`](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9410264843.html?id=7888281276303216541) containing [`IRpcMethod`](https://infosys.beckhoff.com/content/1033/tc3_ads.net/9410254603.html?id=4575198280406047249) instances. Each instance provides details about a specific RPC method, including its name, parameters, return type, comments and more.
+
+**Example Code:**
+```cs
+foreach (IRpcMethod method in MAIN.fbValue.RpcMethods) Console.WriteLine(method.Name);
+
+foreach (IRpcMethod method in MAIN.ipValue.RpcMethods) Console.WriteLine(method.Name);
+```
+
+You can inspect the parameters for any specific method, like the `Sum` method on `ipValue`, by using the `Parameters` property of `IRpcMethod`.
+
+**Example Code:**
+```cs
+foreach (IRpcMethodParameter param in MAIN.ipValue.RpcMethods["Sum"].Parameters)
+{
+    Console.WriteLine(param.Name);
+}
+```
+
+### Invoking an RPC Method
+
+To call an RPC method, use `InvokeRpcMethod`, which accepts the method name, an array of input parameters, and, optionally, an array to hold output parameters.
+
+**Example Code:**
+```cs
+object[] inParams = { 1, 2 };
+object[] outParams;
+
+double sum = MAIN.ipValue.InvokeRpcMethod("Sum", inParams, out outParams);
+
+Console.WriteLine(outParams[0]);
+```
+
+Alternatively, you can use direct method invocation syntax for a more concise call.
+
+**Example Code:**
+```cs
+string message;
+
+double sum = MAIN.ipValue.Sum(1, 2, out message);
+
+Console.WriteLine(message);
+```
+
+> **Note:** Currently, output parameters are not populated when using direct invocation syntax. This may be a limitation in the ADS .NET library, so consider reaching out to Beckhoff Technical Support for clarification. For reliable handling of output parameters, use `InvokeRpcMethod`.
