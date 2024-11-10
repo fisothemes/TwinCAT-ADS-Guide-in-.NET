@@ -15,5 +15,6 @@ Here are additional resources for further assistance:
 - [TwinControl Forum](https://twincontrols.com/)
 - [TwinCAT Tutorials and Articles](https://alltwincat.com/)
 - [CooknCode - TwinCAT Articles](https://cookncode.com/twincat)
+- [TwinCAT ADS.NET V6 documentation](https://infosys.beckhoff.com/english.php?content=../content/1033/tc3_ads.net/index.html&id=3120360106606588270)
 
 I hope this guide has helped you get started with TwinCAT ADS in the .NET environment, and I wish you success in your future automation projects.
