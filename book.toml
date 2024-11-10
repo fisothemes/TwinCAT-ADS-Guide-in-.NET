@@ -9,3 +9,8 @@ src = "src/book"            # the directory of the source files
 [build]
 build-dir = "build/book"    # the directory where the output is placed
 create-missing = true      # whether or not to create missing pages
+
+[output.html]
+git-repository-url = "https://github.com/fisothemes/TwinCAT-ADS-Guide-in-.NET"
+edit-url-template = "https://github.com/fisothemes/TwinCAT-ADS-Guide-in-.NET/tree/master/{path}"
+cname = "https://fisothemes.github.io/TwinCAT-ADS-Guide-in-.NET/"
