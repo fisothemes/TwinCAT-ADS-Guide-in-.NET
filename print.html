@@ -1,0 +1,831 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>A Guide to TwinCAT ADS in .NET with Dynamic Value Manipulation</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="A technical guide to navigating TwinCAT ADS with C#/.NET, focusing on dynamic marshalling and addressing critical knowledge gaps in Beckhoff&#x27;s documentation. This book explores accessing, manipulating, and interacting with TwinCAT PLC data, enabling robust and efficient development with ADS in .NET.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="prerequisites.html"><strong aria-hidden="true">2.</strong> Prerequisites</a></li><li class="chapter-item expanded "><a href="setting-up-the-ads-connection/index.html"><strong aria-hidden="true">3.</strong> Setting Up the ADS Connection</a></li><li class="chapter-item expanded "><a href="defining-the-plc-symbols/index.html"><strong aria-hidden="true">4.</strong> Defining the PLC Symbols</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="defining-the-plc-symbols/enum-definition.html"><strong aria-hidden="true">4.1.</strong> Enum Definition</a></li><li class="chapter-item expanded "><a href="defining-the-plc-symbols/struct-definition.html"><strong aria-hidden="true">4.2.</strong> Struct Definition</a></li><li class="chapter-item expanded "><a href="defining-the-plc-symbols/interface-definition.html"><strong aria-hidden="true">4.3.</strong> Interface Definition</a></li><li class="chapter-item expanded "><a href="defining-the-plc-symbols/function-block-definition.html"><strong aria-hidden="true">4.4.</strong> Function Block Definition</a></li></ol></li><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/index.html"><strong aria-hidden="true">5.</strong> Interacting with PLC Symbols</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/importing-required-libraries.html"><strong aria-hidden="true">5.1.</strong> Importing Required Libraries</a></li><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/loading-symbols-with-the-symbol-loader.html"><strong aria-hidden="true">5.2.</strong> Loading Symbols with the Symbol Loader</a></li><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/accessing-the-main-program-symbol.html"><strong aria-hidden="true">5.3.</strong> Accessing the MAIN Program Symbol</a></li><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/complete-code-example.html"><strong aria-hidden="true">5.4.</strong> Complete Code Example</a></li><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/index.html"><strong aria-hidden="true">5.5.</strong> Reading and Writing Values from PLC Symbols</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/primitives.html"><strong aria-hidden="true">5.5.1.</strong> Primitives</a></li><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/enums.html"><strong aria-hidden="true">5.5.2.</strong> Enums</a></li><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/arrays.html"><strong aria-hidden="true">5.5.3.</strong> Arrays</a></li><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/structs.html"><strong aria-hidden="true">5.5.4.</strong> Structs</a></li><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/function-blocks.html"><strong aria-hidden="true">5.5.5.</strong> Function Blocks</a></li></ol></li><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/handing-events/index.html"><strong aria-hidden="true">5.6.</strong> Handling Events</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/handing-events/monitoring-connection-state-changes.html"><strong aria-hidden="true">5.6.1.</strong> Monitoring Connection State Changes</a></li><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/handing-events/listening-to-ads-state-changes.html"><strong aria-hidden="true">5.6.2.</strong> Listening to ADS State Changes</a></li><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/handing-events/listening-for-value-changes.html"><strong aria-hidden="true">5.6.3.</strong> Listening for Value Changes</a></li><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/handing-events/best-practices.html"><strong aria-hidden="true">5.6.4.</strong> Best Practices</a></li></ol></li><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/remote-procedure-calls/index.html"><strong aria-hidden="true">5.7.</strong> Remote Procedure Calls (RPCs)</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/remote-procedure-calls/checking-for-rpc-methods.html"><strong aria-hidden="true">5.7.1.</strong> Checking for RPC Methods</a></li><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/remote-procedure-calls/listing-available-rpc-methods.html"><strong aria-hidden="true">5.7.2.</strong> Listing Available RPC Methods</a></li><li class="chapter-item expanded "><a href="interacting-with-plc-symbols/remote-procedure-calls/invoking-rpc-methods.html"><strong aria-hidden="true">5.7.3.</strong> Invoking RPC Methods</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="conclusion.html"><strong aria-hidden="true">6.</strong> Conclusion</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">A Guide to TwinCAT ADS in .NET with Dynamic Value Manipulation</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/fisothemes/TwinCAT-ADS-Guide-in-.NET" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p>When I first explored TwinCAT ADS for C#/.NET, I quickly realised that the official Infosys documentation lacked coherence and omitted essential use cases. Key topics, like reading complex structs, invoking RPC methods, and handling dynamic symbol values, were either incomplete or presented in ways that made practical application challenging.</p>
+<p>This book aims to bridge those gaps through clear, example-driven explanations on:</p>
+<ul>
+<li>
+<p><strong>Connecting to TwinCAT ADS in .NET</strong> – Establish a reliable client for interfacing with TwinCAT PLCs.</p>
+</li>
+<li>
+<p><strong>Dynamic Symbol Management</strong> – Accessing and manipulating PLC symbols with flexibility and ease, leveraging dynamic types to avoid rigid, predefined structures.</p>
+</li>
+<li>
+<p><strong>Event Handling</strong> – Setting up event-driven reads to monitor symbol changes, connection states, and ADS states, enabling responsive and efficient data interaction.</p>
+</li>
+<li>
+<p><strong>RPC Invocation</strong> – Interact directly with function blocks and interfaces on the PLC through remote procedure calls (RPCs), simplifying PLC automation.</p>
+</li>
+</ul>
+<p>I hope by the end of this book, you'll be able to access, control, and manipulate your PLC data in a straightforward and accessible way, so you can focus on building robust, adaptable, high-performance applications.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h1>
+<p>To make full use of this book, ensure you have the following installed and configured:</p>
+<ol>
+<li>
+<p><strong>The Beckhoff TwinCAT XAE (eXtended Automation Engineering) or XAR (eXtended Automation Runtime)</strong> – Necessary for configuring and deploying PLC applications. Both can be downloaded from the <a href="https://www.beckhoff.com/en-en/support/download-finder/">Beckhoff download finder</a> webpage.</p>
+</li>
+<li>
+<p><strong><a href="https://dotnet.microsoft.com/en-us/download/dotnet">Microsoft .NET SDK 8.0</a></strong> – Provides the tools and libraries for developing and running .NET applications. You can install it with <code>winget</code> by running:</p>
+<pre><code class="language-ps">winget install Microsoft.DotNet.SDK.8
+</code></pre>
+</li>
+<li>
+<p><strong>An IDE for C# Development</strong> – For this book I used Visual Studio Code with the <a href="https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp">C# extension</a> and the .NET CLI. If you are new to this setup, you can refer to the <a href="https://code.visualstudio.com/docs/languages/dotnet">Visual Studio Code .NET documentation</a> for additional guidance.</p>
+<p>To get started with the .NET CLI in your chosen directory, you can create a new console application with:</p>
+<pre><code class="language-ps">dotnet new console -n &lt;ProjectName&gt;
+</code></pre>
+<p>For a list of available project templates:</p>
+<pre><code class="language-ps">dotnet new list
+</code></pre>
+<p>To build and run your project:</p>
+<pre><code class="language-ps">dotnet run
+</code></pre>
+<p>A comprehensive guide to the .NET CLI can be found <a href="https://learn.microsoft.com/en-us/dotnet/core/tools/">here</a>.</p>
+</li>
+<li>
+<p><strong><a href="https://www.nuget.org/packages/Beckhoff.TwinCAT.Ads">Beckhoff TwinCAT ADS NuGet Package</a></strong> – This package allows you to establish an ADS connection to the PLC.</p>
+<p>Install it by running this command in your project root directory:</p>
+<pre><code class="language-ps">dotnet add package Beckhoff.TwinCAT.Ads
+</code></pre>
+</li>
+<li>
+<p><strong><a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json NuGet Package</a></strong> – This package is used for JSON serialisation of dynamic objects, which is particularly helpful for displaying complex symbol values in a structured format. </p>
+<p>You can install it by running this command in your project's root directory:</p>
+<pre><code class="language-ps">dotnet add package Newtonsoft.Json
+</code></pre>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="setting-up-the-ads-connection"><a class="header" href="#setting-up-the-ads-connection">Setting Up the ADS Connection</a></h1>
+<p>To start, let’s establish a connection to the PLC. The code below assumes you have an active TwinCAT project ready to connect with. For this guide, I recommend creating a new .NET project for simplicity, then pasting the code below into your <code>Program.cs</code> file (or whichever file contains your entry point).</p>
+<pre><code class="language-cs">using TwinCAT.Ads;
+
+using (AdsClient client = new())
+{
+    client.Connect(AmsNetId.Local, 851);
+    Console.WriteLine
+    (
+        &quot;Hello there!\n&quot; +
+        $&quot;You're connected to {client.Address} from {client.ClientAddress}.\n&quot; +
+        $&quot;The current state of the PLC is: {client.ReadState().AdsState}.\n&quot; +
+        &quot;\nPress any key to exit...\n&quot;
+    );
+    Console.ReadKey(true);
+}
+</code></pre>
+<p>This code should produce output similar to the following when run:</p>
+<pre><code class="language-console">Hello there!
+You're connected to 192.168.137.1.1.1:851 from 192.168.137.1.1.1:XXXXX.
+The current state of the PLC is: Run.
+
+Press any key to exit...
+</code></pre>
+<p>This code connects to the PLC on the local AMS Net ID with port <code>851</code>. It displays the connection details, including the PLC state, which should confirm a successful connection if everything is set up correctly. Pressing any key will then terminate the application. </p>
+<p>This setup gives you a basic foundation for communicating with your PLC through ADS in .NET.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="defining-the-plc-symbols"><a class="header" href="#defining-the-plc-symbols">Defining the PLC Symbols</a></h1>
+<p>Now that we’ve established a connection to the PLC, let's look at the symbols we’ll be working with in this book. </p>
+<p>The <strong><code>MAIN</code></strong> program in the TwinCAT project is defined as follows:</p>
+<pre><code class="language-iec-st">PROGRAM MAIN
+VAR
+    nValue  : DINT                  := 42;
+    fValue  : LREAL                 := 3.14;
+    eValue  : E_Value               := E_Value.Winter;
+    arValue : ARRAY[0..2] OF LREAL  := [273.15, 2.71, 9.80665];
+    stValue : ST_Value              := (bValue := TRUE, sValue := 'Hello there!');
+    fbValue : FB_Value;
+    ipValue : I_Value               := fbValue; 
+END_VAR
+</code></pre>
+<p>We’ll be interacting with four symbols, each representing different data types and complexities:</p>
+<ol>
+<li><strong><code>nValue</code></strong>: A basic integer type.</li>
+<li><strong><code>fValue</code></strong>: A floating-point value (LREAL).</li>
+<li><strong><code>eValue</code></strong>: An enumeration.</li>
+<li><strong><code>arValue</code></strong>: An array containing floating-point numbers (LREAL).</li>
+<li><strong><code>stValue</code></strong>: A structured type that we’ll define below.</li>
+<li><strong><code>fbValue</code></strong>: A function block that includes an RPC method and a property.</li>
+<li><strong><code>ipValue</code></strong>: An interface that includes an RPC method.</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="enum-definition"><a class="header" href="#enum-definition">Enum Definition</a></h1>
+<p>The <code>eValue</code> variable is an instance of type <code>E_Value</code>, an enumeration that represents seasons. Here’s its definition:</p>
+<pre><code class="language-iec-st">TYPE E_Value :
+(
+    _ := 0,
+    Summer,
+    Autumn,
+    Winter,
+    Spring
+)UINT;
+END_TYPE
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="struct-definition"><a class="header" href="#struct-definition">Struct Definition</a></h1>
+<p>The <code>stValue</code> variable is an instance of the structured data type <code>ST_Value</code>. Here’s its definition:</p>
+<pre><code class="language-iec-st">TYPE ST_Value :
+STRUCT
+    bValue : BOOL;
+    sValue : STRING;
+END_STRUCT
+END_TYPE
+</code></pre>
+<p>The struct <code>ST_Value</code> contains a boolean (<code>bValue</code>) and a string (<code>sValue</code>). These members allow us to test interactions with complex data types.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="interface-definition"><a class="header" href="#interface-definition">Interface Definition</a></h1>
+<p>The <code>I_Value</code> interface defines a method that will enable Remote Procedure Call (RPC) access. Here’s the definition:</p>
+<pre><code class="language-iec-st">INTERFACE I_Value
+{attribute 'TcRpcEnable'}
+METHOD Sum : LREAL
+VAR_INPUT
+    fA, fB : LREAL;
+END_VAR
+VAR_OUTPUT
+    sMessage : STRING;
+END_VAR
+END_METHOD
+END_INTERFACE
+</code></pre>
+<p>The <code>Sum</code> method is enabled for RPC through the <code>{attribute 'TcRpcEnable'}</code> pragma, allowing it to be called remotely via ADS. This method takes two <code>LREAL</code> inputs and returns a sum along with a descriptive message in <code>sMessage</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="function-block-definition"><a class="header" href="#function-block-definition">Function Block Definition</a></h1>
+<p>The <code>fbValue</code> variable is an instance of the function block <code>FB_Value</code> which implements the <code>I_Value</code> interface. This function block demonstrates remote procedure calls (RPC) and property access through ADS. </p>
+<p>The function block <code>FB_Value</code> includes:</p>
+<ul>
+<li>An <strong>RPC method</strong> called <code>Sum</code> that calculates the sum of two <code>LREAL</code> inputs and returns both the sum and a descriptive string message.</li>
+<li>A <strong>property</strong> called <code>Value</code> that can be accessed and modified remotely. This property uses the <code>{attribute 'monitoring' := 'call'}</code> pragma to allow read and write operations over ADS, though note that this feature isn’t supported on Windows CE-based PLCs.</li>
+</ul>
+<p>Below is the full implementation of <code>FB_Value</code>:</p>
+<pre><code class="language-iec-st">FUNCTION_BLOCK FB_Value IMPLEMENTS I_Value
+VAR
+   _fValue : LREAL;
+END_VAR
+
+{attribute 'TcRpcEnable'}
+METHOD Sum : LREAL
+VAR_INPUT
+    fA, fB : LREAL;
+END_VAR
+VAR_OUTPUT
+    sMessage : STRING;
+END_VAR
+    Sum := fA + fB;
+    sMessage := 
+        CONCAT('The sum of ', 
+        CONCAT(TO_STRING(fA),
+        CONCAT(' and ', 
+        CONCAT(TO_STRING(fB), 
+        CONCAT(' is ', TO_STRING(Sum)
+    )))));
+END_METHOD
+
+{attribute 'monitoring' := 'call'}
+PROPERTY Value : LREAL
+GET
+    Value := THIS^._fValue;
+SET
+    THIS^._fValue := Value * 2;
+END_PROPERTY
+
+END_FUNCTION_BLOCK
+</code></pre>
+<ul>
+<li><strong>Method: <code>Sum</code></strong>: This RPC-enabled method takes two <code>LREAL</code> parameters (<code>fA</code> and <code>fB</code>) as input and returns their sum. The output <code>sMessage</code> provides a summary of the calculation in text format, giving both the input values and the result.</li>
+<li><strong>Property: <code>Value</code></strong>: This property provides controlled access to the internal <code>_fValue</code> variable. In the <code>GET</code> accessor, it simply returns the current <code>_fValue</code>. In the <code>SET</code> accessor, it doubles the input value before storing it back into <code>_fValue</code>.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="interacting-with-plc-symbols"><a class="header" href="#interacting-with-plc-symbols">Interacting with PLC Symbols</a></h1>
+<p>After defining the symbols we can now begin interacting with them in C# .NET.</p>
+<p>In this section, we’ll leverage the <a href="https://learn.microsoft.com/en-us/dotnet/framework/reflection-and-codedom/dynamic-language-runtime-overview">.NET Dynamic Language Runtime (DLR)</a> to create dynamic objects that represent each PLC symbol. These generated objects mirror the structure and data of the symbols on the PLC, including standard IEC61131 types defined in the PLC. For instance, the PLC symbol <code>&quot;MAIN.nValue&quot;</code> is accessed as <code>MAIN.nValue</code> in C#, allowing seamless interaction with your PLC's variables.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="importing-required-libraries"><a class="header" href="#importing-required-libraries">Importing Required Libraries</a></h1>
+<p>Before we begin we’ll need to import several essential libraries. These libraries provide tools for establishing ADS communication, loading symbols dynamically, managing the PLC’s symbol system, and handling JSON data if required.</p>
+<p>Below are the required imports:</p>
+<pre><code class="language-cs">using TwinCAT;
+using TwinCAT.Ads;
+using TwinCAT.Ads.TypeSystem;
+using TwinCAT.TypeSystem;
+using Newtonsoft.Json;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="loading-symbols-with-the-symbol-loader"><a class="header" href="#loading-symbols-with-the-symbol-loader">Loading Symbols with the Symbol Loader</a></h1>
+<p>To interact with PLC variables, we first need to load the symbols using a dynamic symbol loader.</p>
+<p>The following code uses the <a href="https://infosys.beckhoff.com/content/1031/tcadsnetref/7313976459.html?id=3714501762720183437"><code>SymbolLoaderFactory</code></a> to create and return an instance of an object that implements <a href="https://infosys.beckhoff.com/content/1033/tc3_ads.net/9410088715.html?id=2842232253864591757"><code>IDynamicSymbolLoader</code></a> internally. This object which provides access to the <a href="https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409856267.html?id=8767024214869055963"><code>DynamicSymbolsCollection</code></a>. A collection holds all the symbols available in the PLC, allowing us to browse and interact with them dynamically:</p>
+<pre><code class="language-cs">var symbolLoader = (IDynamicSymbolLoader)SymbolLoaderFactory.Create
+(
+    client,
+    new SymbolLoaderSettings(SymbolsLoadMode.DynamicTree)
+);
+
+var symbols = (DynamicSymbolsCollection)symbolLoader.SymbolsDynamic;
+</code></pre>
+<p>To list the top-level PLC symbols, use the following snippet:</p>
+<pre><code class="language-cs">foreach (var symbol in symbols) 
+{
+    Console.WriteLine(symbol.InstancePath);
+}
+</code></pre>
+<p>Assuming a fresh TwinCAT project is active, this should output the following symbols in the console:</p>
+<pre><code class="language-console">Constants
+Global_Version
+MAIN
+TwinCAT_SystemInfoVarList
+</code></pre>
+<p>These top-level symbols represent either global variable lists (GVLs) or programs (PROGRAMs) in the PLC. From here, you can drill down further into specific PROGRAMs or GVLs to explore their contained variables, properties and methods.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="accessing-the-main-program-symbol"><a class="header" href="#accessing-the-main-program-symbol">Accessing the MAIN Program Symbol</a></h1>
+<p>The <strong><code>MAIN</code></strong> program symbol usually represents the primary program block in our TwinCAT PLC setup.</p>
+<p>To retrieve the <strong><code>MAIN</code></strong> program symbol from the <code>DynamicSymbolsCollection</code>, we can use either of these commands:</p>
+<pre><code class="language-cs">dynamic MAIN = symbols[&quot;MAIN&quot;];
+</code></pre>
+<p>or more succinctly:</p>
+<pre><code class="language-cs">dynamic MAIN = symbols.MAIN;
+</code></pre>
+<p>Here, we're creating a <code>DynamicSymbol</code> object representing <code>MAIN</code> using the Dynamic Language Runtime (DLR). This approach allows us to interact with symbols flexibly. However, since it’s a dynamic type, IntelliSense won't provide auto-suggestions for properties or methods. Please, familiarising yourself with the <a href="https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409775371.html?id=8821441701441924477"><code>DynamicSymbol</code> documentation</a>. It will be useful as you work with these objects.</p>
+<p>To inspect the symbols under <strong><code>MAIN</code></strong>, we can iterate over its <code>SubSymbols</code> property. This provides a list of all variables and data structures contained within <strong><code>MAIN</code></strong>, which will vary depending on your PLC configuration:</p>
+<pre><code class="language-cs">foreach (var symbol in MAIN.SubSymbols) 
+{
+    Console.WriteLine(symbol.InstancePath);
+}
+</code></pre>
+<p>If you've setup your TwinCAT project using the symbols we defined earlier, the above code snippet should output:</p>
+<pre><code class="language-console">MAIN.arValue
+MAIN.eValue
+MAIN.fbValue
+MAIN.fValue
+MAIN.ipValue
+MAIN.nValue
+MAIN.stValue
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="complete-code-example"><a class="header" href="#complete-code-example">Complete Code Example</a></h1>
+<p>Now that we've explored accessing the <strong><code>MAIN</code></strong> program symbol and listing its sub-symbols, let’s put it all together in a full example. This complete code snippet covers each step we've discussed: connecting to the PLC, loading symbols dynamically, and accessing the <strong><code>MAIN</code></strong> program symbol and its contents.</p>
+<p>The code example below demonstrates how to import the necessary libraries, establish a connection to your device, load the available symbols using the <code>SymbolLoaderFactory</code>, and list both the top-level symbols and the sub-symbols within <strong><code>MAIN</code></strong>.</p>
+<pre><code class="language-cs">using TwinCAT;
+using TwinCAT.Ads;
+using TwinCAT.Ads.TypeSystem;
+using TwinCAT.TypeSystem;
+
+using (AdsClient client = new())
+{
+    client.Connect(AmsNetId.Local, 851);
+    var symbolLoader = (IDynamicSymbolLoader)SymbolLoaderFactory.Create
+    (
+        client,
+        new SymbolLoaderSettings(SymbolsLoadMode.DynamicTree)
+    );
+
+    var symbols = (DynamicSymbolsCollection)symbolLoader.SymbolsDynamic;
+
+    foreach (var symbol in symbols) Console.WriteLine(symbol.InstancePath);
+    Console.WriteLine();
+
+    dynamic MAIN = symbols[&quot;MAIN&quot;];
+    
+    foreach (var symbol in MAIN.SubSymbols) Console.WriteLine(symbol.InstancePath);
+
+    Console.WriteLine(&quot;\nPress any key to exit...\n&quot;);
+    Console.ReadKey(true);
+}
+</code></pre>
+<p>Running this code will display the following:</p>
+<pre><code class="language-console">Constants
+Global_Version
+MAIN
+TwinCAT_SystemInfoVarList
+
+MAIN.arValue
+MAIN.eValue
+MAIN.fbValue
+MAIN.fValue
+MAIN.ipValue
+MAIN.nValue
+MAIN.stValue
+
+Press any key to exit...
+</code></pre>
+<p>This is a list of the top-level symbols, followed by all sub-symbols within <strong><code>MAIN</code></strong>, demonstrating how to examine the structure of your PLC program and begin working with its data. This setup provides a solid foundation for the dynamic handling of symbols that will be used the following sections of this book.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="reading-and-writing-values-from-plc-symbols"><a class="header" href="#reading-and-writing-values-from-plc-symbols">Reading and Writing Values from PLC Symbols</a></h1>
+<p>In this section, we’ll explore how to retrieve and set values for various PLC symbols, focusing on those defined in the <strong><code>MAIN</code></strong> program from earlier sections using the dynamic symbol loader. Remember, it’s essential that the names of dynamic symbols in C# .NET precisely match those in the PLC program. For instance, the symbol <code>&quot;MAIN.nValue&quot;</code> in the PLC is accessed as <code>MAIN.nValue</code> in .NET.</p>
+<p>We’ll begin by working with primitive types, then move on to more complex data structures, demonstrating how to interact with each type through dynamic symbols.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="primitives"><a class="header" href="#primitives">Primitives</a></h1>
+<p>Primitive types, such as booleans, integers, and floating-point numbers, are handled in TwinCAT ADS .NET library by instances of the <a href="https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409775371.html?id=8821441701441924477"><code>DynamicSymbol</code></a> class. To retrieve values from these symbols, call the <code>ReadValue()</code> method. Assigning the output to a typed variable ensures type safety, enhances readability, and minimises round-trips to the PLC. For updating values, the <code>WriteValue(Object)</code> method allows you to set new values by passing the desired data as a parameter.</p>
+<h3 id="reading-primitive-values"><a class="header" href="#reading-primitive-values">Reading Primitive Values</a></h3>
+<p>Here’s an example of reading primitive values from the <strong><code>MAIN</code></strong> program:</p>
+<pre><code class="language-cs">dynamic MAIN = symbols[&quot;MAIN&quot;];
+
+int plcIntValue = MAIN.nValue.ReadValue();
+double plcDblValue = MAIN.fValue.ReadValue();
+</code></pre>
+<h3 id="writing-primitive-values"><a class="header" href="#writing-primitive-values">Writing Primitive Values</a></h3>
+<p>To modify these values, use <code>WriteValue()</code> as shown below:</p>
+<pre><code class="language-cs">MAIN.nValue.WriteValue(88);
+MAIN.fValue.WriteValue(6.626);
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="enums"><a class="header" href="#enums">Enums</a></h1>
+<p>Enums, similar to primitive types, are represented by instances of the <a href="https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409775371.html?id=8821441701441924477"><code>DynamicSymbol</code></a> class. Reading an enum’s value involves calling the <code>ReadValue()</code> method. Since PLC enums are represented by their underlying numeric type (e.g., <code>byte</code>, <code>ushort</code>, <code>int</code>, etc.), it’s best to specify the numeric type directly in the PLC code to maintain consistency between the PLC and .NET.</p>
+<p>Here’s an example of an enum type in Structured Text with <code>UINT</code> as its underlying type:</p>
+<pre><code class="language-iec-st">TYPE E_Value :
+(
+    _ := 0,
+    Summer,
+    Autumn,
+    Winter,
+    Spring
+) UINT;
+END_TYPE
+</code></pre>
+<p>This setup allows for consistent casting to the correct numeric type in .NET when reading or writing values.</p>
+<h3 id="reading-enum-values"><a class="header" href="#reading-enum-values">Reading Enum Values</a></h3>
+<p>To read an enum value, use the <code>ReadValue()</code> method and cast it to the specified type:</p>
+<pre><code class="language-cs">dynamic MAIN = symbols[&quot;MAIN&quot;];
+ushort plcEnumValue = (ushort)MAIN.eValue.ReadValue();
+</code></pre>
+<h3 id="writing-enum-values"><a class="header" href="#writing-enum-values">Writing Enum Values</a></h3>
+<p>To set an enum value, use the <code>WriteValue(Object)</code> method. You can either pass the integer representation directly or use .NET features to translate the enum member to its numeric value.</p>
+<p>Here’s how to set <code>eValue</code> to <code>Autumn</code>, which corresponds to <code>2</code>:</p>
+<pre><code class="language-cs">MAIN.eValue.WriteValue(2);
+</code></pre>
+<p>Alternatively, if you prefer converting an enum name to its numeric equivalent, the <a href="https://infosys.beckhoff.com/content/1033/tc3_ads.net/9410065163.html?id=5972020133665255142"><code>IDataTypeCollection</code></a> and <a href="https://infosys.beckhoff.com/content/1033/tcadsnetref/7314516107.html?id=5847315386802257082"><code>IEnumType</code></a> interfaces allow for parsing:</p>
+<pre><code class="language-cs">var enumType = (IEnumType)symbolLoader.DataTypes[&quot;E_Value&quot;];
+var enumValue = (ushort)enumType.Parse(&quot;Autumn&quot;);
+MAIN.eValue.WriteValue(enumValue);
+</code></pre>
+<h3 id="accessing-enum-names-and-values"><a class="header" href="#accessing-enum-names-and-values">Accessing Enum Names and Values</a></h3>
+<p>The <code>IEnumType</code> interface also provides convenient access to the enum members’ names and values:</p>
+<p><strong>Names</strong>: Retrieve an array of member names:</p>
+<pre><code class="language-cs">string[] enumNames = enumType.GetNames();
+</code></pre>
+<p><strong>Values</strong>: Retrieve an array of the corresponding numeric values as <code>IConvertible[]</code>:</p>
+<pre><code class="language-cs">IConvertible[] enumValues = enumType.GetValues();
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="arrays"><a class="header" href="#arrays">Arrays</a></h1>
+<p>Arrays are represented as instances of the <a href="https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409694475.html?id=6573674385667625432"><code>DynamicArrayInstance</code></a> class, supporting read and write operations for both individual elements and entire arrays.</p>
+<h3 id="reading-arrays"><a class="header" href="#reading-arrays">Reading Arrays</a></h3>
+<p>To read an entire array, use the <code>ReadValue()</code> method:</p>
+<pre><code class="language-cs">dynamic MAIN = symbols[&quot;MAIN&quot;];
+double[] plcDblArray = MAIN.arValue.ReadValue();
+</code></pre>
+<p>To retrieve a single element in an array, there are multiple approaches. Each of these reads the first element:</p>
+<pre><code class="language-cs">MAIN.arValue[0].ReadValue();
+MAIN.arValue.Elements[0].ReadValue();
+MAIN.arValue.SubSymbols[0].ReadValue();
+</code></pre>
+<p>Using <code>MAIN.arValue[0]</code> is recommended, particularly for multidimensional arrays, as it simplifies syntax.</p>
+<h3 id="writing-to-array-elements"><a class="header" href="#writing-to-array-elements">Writing to Array Elements</a></h3>
+<p>To modify a single element, use the <code>WriteValue(Object)</code> method:</p>
+<pre><code class="language-cs">MAIN.arValue[0].WriteValue(6.626);
+</code></pre>
+<p>Attempting to update an entire array in a single call will raise an <code>ArgumentOutOfRangeException</code> due to current limitations in <code>WriteValue(Object)</code> for array symbols:</p>
+<pre><code class="language-cs">// This will cause an error
+MAIN.arValue.WriteValue(new double[] { 1.602, 6.022, 1.380 });
+</code></pre>
+<p>Instead, each element must be updated individually:</p>
+<pre><code class="language-cs">double[] newValues = { 1.602, 6.022, 1.380 };
+for (int i = 0; i &lt; Math.Min(newValues.Length, MAIN.arValue.Elements.Count); i++)
+    MAIN.arValue[i].WriteValue(newValues[i]);
+</code></pre>
+<p>While functional, this approach involves multiple write operations, which may be less efficient. If this behaviour appears to be a limitation, consider reaching out to Beckhoff Technical Support for clarification.</p>
+<blockquote>
+<p><strong>Tip:</strong> For multidimensional arrays, extend this approach by adding nested loops for each dimension.</p>
+</blockquote>
+<h3 id="handling-non-zero-based-arrays"><a class="header" href="#handling-non-zero-based-arrays">Handling Non-Zero-Based Arrays</a></h3>
+<p>The IEC-61131-3 standard permits arrays with custom, non-zero-based bounds. To interact with these arrays, use their specific indices:</p>
+<pre><code class="language-cs">double plcArrayValue = MAIN.arNewValues[-1].ReadValue();
+MAIN.arNewValues[-1].WriteValue(10_973_731.568160);
+</code></pre>
+<h3 id="array-metadata-with-dimensions"><a class="header" href="#array-metadata-with-dimensions">Array Metadata with <code>Dimensions</code></a></h3>
+<p>The <code>Dimensions</code> property offers valuable metadata about an array, such as bounds, dimensions, and whether it’s non-zero-based:</p>
+<pre><code class="language-cs">int[] lowerBounds = MAIN.arValue.Dimensions.LowerBounds;
+int[] upperBounds = MAIN.arValue.Dimensions.UpperBounds;
+int numOfDimensions = MAIN.arValue.Dimensions.Count;
+int[] dimensionLengths = MAIN.arValue.Dimensions.GetDimensionLengths();
+bool isNonZeroBased = MAIN.arValue.Dimensions.IsNonZeroBased;
+
+foreach (var dim in MAIN.arValue.Dimensions) Console.WriteLine(dim.ElementCount);
+</code></pre>
+<p>The <code>Dimensions</code> property is especially useful when working with complex arrays of various sizes and bounds, providing flexibility in managing diverse array structures.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="structs"><a class="header" href="#structs">Structs</a></h1>
+<p>Structs are represented by the <a href="https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409764107.html?id=6274677468644360560"><code>DynamicStructInstance</code></a> class, which enables both reading and writing operations for individual members or the entire structure.</p>
+<h3 id="reading-structs"><a class="header" href="#reading-structs">Reading Structs</a></h3>
+<p>To retrieve all members of a struct at once, use the <code>ReadValue()</code> method:</p>
+<pre><code class="language-cs">dynamic MAIN = symbols[&quot;MAIN&quot;];
+dynamic plcStructValue = MAIN.stValue.ReadValue();
+</code></pre>
+<p>Individual struct members can be accessed directly by name:</p>
+<pre><code class="language-cs">bool plcBoolValue = MAIN.stValue.bValue.ReadValue();
+string plcStrValue = MAIN.stValue.sValue.ReadValue();
+</code></pre>
+<h3 id="writing-to-struct-members"><a class="header" href="#writing-to-struct-members">Writing to Struct Members</a></h3>
+<p>To modify specific struct members, use the <code>WriteValue(Object)</code> method:</p>
+<pre><code class="language-cs">MAIN.stValue.bValue.WriteValue(false);
+MAIN.stValue.sValue.WriteValue(&quot;General Kenobi!&quot;);
+</code></pre>
+<h3 id="limitations-of-writing-entire-structs"><a class="header" href="#limitations-of-writing-entire-structs">Limitations of Writing Entire Structs</a></h3>
+<p>Attempting to write an entire struct at once using an anonymous object will raise an error, as shown below:</p>
+<pre><code class="language-cs">// This produces an error: &quot;Struct member 'bValue' (of ValueType: &lt;&gt;f__AnonymousType0`2) not found!&quot;
+MAIN.stValue.WriteValue(new
+{
+    bValue = true,
+    sValue = &quot;Another happy landing!&quot;
+});
+</code></pre>
+<p>This error occurs because <code>DynamicValueMarshaler</code> expects either a <code>DynamicValue</code> or a compatible ADS struct type, not a .NET anonymous object. If writing an entire struct in one call would be useful for your application, consider contacting Beckhoff Technical Support to confirm if this behavior is a limitation or intended. </p>
+<blockquote>
+<p><strong>Note:</strong> If you find an alternative approach or improvement, feel free to submit a pull request to enhance this guide for other developers!</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="function-blocks"><a class="header" href="#function-blocks">Function Blocks</a></h1>
+<p>Function blocks can be accessed similarly to structs, allowing access to both local variables and properties. Properties marked with the <code>{attribute 'monitoring' := 'call'}</code> pragma can be accessed just like struct members. When properties contain code within their getter or setter blocks, that code will execute upon reading or writing to the property directly.</p>
+<h3 id="reading-function-blocks"><a class="header" href="#reading-function-blocks">Reading Function Blocks</a></h3>
+<p>To retrieve the entire function block, use the <code>ReadValue()</code> method:</p>
+<pre><code class="language-cs">dynamic MAIN = symbols[&quot;MAIN&quot;];
+dynamic plcFBValue = MAIN.fbValue.ReadValue();
+</code></pre>
+<p>Once you have retrieved the function block as a whole, you can access its local variables directly as shown below:</p>
+<pre><code class="language-cs">double localValue = plcFBValue._fValue; 
+</code></pre>
+<p>You can also retrieve property values using this method, but be aware that doing so will <strong>NOT</strong> trigger any logic within the getter. The following code retrieves the property value without executing its getter logic:</p>
+<pre><code class="language-cs">double propValue = plcFBValue.Value;
+</code></pre>
+<p>To ensure that the getter logic is called, you need to access the property directly and use the <code>ReadValue()</code> method, as shown here:</p>
+<pre><code class="language-cs">double propValue = MAIN.fbValue.Value.ReadValue();
+</code></pre>
+<p>You can also directly read the value of any function block local variable:</p>
+<pre><code class="language-cs">double localValue = MAIN.fbValue._fValue.ReadValue();
+</code></pre>
+<h3 id="writing-function-blocks"><a class="header" href="#writing-function-blocks">Writing Function Blocks</a></h3>
+<p>The only way to write to function block local variables and properties is to use <code>WriteValue(Object)</code> directly on them:</p>
+<pre><code class="language-cs">MAIN.fbValue._fValue.WriteValue(2001);
+MAIN.fbValue.Value.WriteValue(66);
+</code></pre>
+<p>You cannot modify PLC symbols in a function block that has been retrieved as a whole:</p>
+<pre><code class="language-cs">// Compiles but does nothing.
+plcFBValue._fValue = 1999.0;
+plcFBValue.Value = 300.0;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="handling-events"><a class="header" href="#handling-events">Handling Events</a></h1>
+<p>At times you may need to respond to changes in the ADS device’s state or track updates to specific symbol values dynamically. The TwinCAT ADS .NET library provides several built-in events that allow you to do just that. This section demonstrates how to handle connection state changes, monitor ADS state transitions, and listen for updates to symbol values.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="monitoring-connection-state-changes"><a class="header" href="#monitoring-connection-state-changes">Monitoring Connection State Changes</a></h1>
+<p>The <a href="https://infosys.beckhoff.com/content/1033/tc3_ads.net/9407908619.html"><code>ConnectionStateChanged</code></a> event allows you to track changes in the connection status of the ADS client. This is useful for managing connectivity and taking appropriate actions when the connection to the PLC is established or lost.</p>
+<blockquote>
+<p><strong>Note:</strong> The connection state changes only when the client actively connects to or disconnects from the PLC, or when communication is initiated by the user.</p>
+</blockquote>
+<p>The code below demonstrates how to register an event handler to the <code>ConnectionStateChanged</code> event:</p>
+<pre><code class="language-cs">var connectionStateChangedHandler = new EventHandler&lt;ConnectionStateChangedEventArgs&gt;
+(
+    (sender, e) =&gt;
+    {
+        Console.WriteLine($&quot;Client connection state: {e.NewState}.&quot;);
+    }
+);
+
+client.ConnectionStateChanged += connectionStateChangedHandler;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="listening-to-ads-state-changes"><a class="header" href="#listening-to-ads-state-changes">Listening to ADS State Changes</a></h1>
+<p>The <a href="https://infosys.beckhoff.com/content/1033/tc3_ads.net/9407905547.html"><code>AdsStateChanged</code></a> event enables you to monitor when the ADS client transitions between different operational states. This event is beneficial for tracking ADS state transitions and responding to conditions where the client moves between states such as <code>Run</code>, <code>Stop</code>, or <code>Error</code>.</p>
+<p>The code below demonstrates how to register an event handler to the <code>AdsStateChanged</code> event:</p>
+<pre><code class="language-cs">var adsStateChangedHandler = new EventHandler&lt;AdsStateChangedEventArgs&gt;
+(
+    (sender, e) =&gt;
+    {
+        Console.WriteLine
+        (
+            $&quot;ADS state changed. New state: {e.State.AdsState}, &quot; +
+            $&quot;Device state: {e.State.DeviceState}&quot;
+        );
+    }
+);
+
+client.AdsStateChanged += adsStateChangedHandler;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="listening-for-value-changes"><a class="header" href="#listening-for-value-changes">Listening for Value Changes</a></h1>
+<p>One of the most valuable features of the ADS client is its capability to track real-time updates to PLC symbols via the <a href="https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409850123.html"><code>ValueChanged</code></a> event. This event notifies you whenever a subscribed symbol’s value changes, making it essential for applications that need to respond to dynamic data.</p>
+<p>The code below demonstrates how to register an event handler to the <code>ValueChanged</code> event:</p>
+<pre><code class="language-cs">var valueChangedHandler = new EventHandler&lt;ValueChangedEventArgs&gt;
+(
+    (sender, e) =&gt;
+    {
+        dynamic val = e.Value;
+        Console.WriteLine
+        (
+            $&quot;Value of {e.Symbol.InstancePath} changed to &quot; +
+            (e.Symbol.IsPrimitiveType ? val : JsonConvert.SerializeObject(val))
+        );
+    }
+);
+
+MAIN.fValue.ValueChanged += valueChangedHandler;
+MAIN.stValue.ValueChanged += valueChangedHandler;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h1>
+<ul>
+<li>
+<p><strong>Minimise Processing in Handlers:</strong> Keep event handlers efficient to avoid performance bottlenecks. Offload intensive tasks to a separate thread or process if needed.</p>
+</li>
+<li>
+<p><strong>Unsubscribe Appropriately:</strong> Always unsubscribe from events when they are no longer needed to prevent memory leaks.</p>
+</li>
+<li>
+<p><strong>Ensure Thread Safety:</strong> If your application is multi-threaded, ensure that event handlers are thread-safe and can handle concurrent updates properly.</p>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="remote-procedure-calls-rpcs"><a class="header" href="#remote-procedure-calls-rpcs">Remote Procedure Calls (RPCs)</a></h1>
+<p>Remote Procedure Calls (RPCs) provide a powerful way to interact with PLC function blocks and interfaces by invoking methods directly from your .NET client application. This approach is particularly useful for handling structured data and executing business logic encapsulated within the PLC, allowing for streamlined communication and control.</p>
+<p>In the TwinCAT ADS .NET library, function blocks and interfaces are represented as dynamic types (<a href="https://infosys.beckhoff.com/content/1033/tc3_ads.net/9409764107.html?id=6274677468644360560"><code>DynamicStructInstance</code></a> for function blocks and <a href="https://infosys.beckhoff.com/content/1033/tc3_ads.net/12395675659.html?id=7340312406529576735"><code>DynamicInterfaceInstance</code></a> for interfaces). <code>DynamicStructInstance</code> inherits from <code>DynamicInterfaceInstance</code>, giving both classes shared access to RPC-related properties and methods. </p>
+<p>This section will guide you through checking for RPC support, listing RPC methods, and invoking them to extend your control over PLC operations.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="checking-for-rpc-methods"><a class="header" href="#checking-for-rpc-methods">Checking for RPC Methods</a></h1>
+<p>Before attempting to invoke an RPC method, it’s helpful to confirm whether a PLC symbol supports RPC functionality. Both <code>DynamicInterfaceInstance</code> and <code>DynamicStructInstance</code> classes include an <code>HasRpcMethods</code> property, which returns <code>true</code> if RPC methods are available for the symbol. Checking this property can help you avoid errors from attempting to call unsupported methods.</p>
+<p>Here’s how you can check if a function block or interface has RPC methods:</p>
+<pre><code class="language-cs">var formatYesNoResponse = (bool answer) =&gt; answer ? &quot;Yes&quot; : &quot;No&quot;;
+
+Console.WriteLine
+(
+    $&quot;Does {MAIN.fbValue.InstancePath} have RPC methods?: &quot; +
+    formatYesNoResponse(MAIN.fbValue.HasRpcMethods)
+);
+
+Console.WriteLine
+(
+    $&quot;Does {MAIN.ipValue.InstancePath} have RPC methods?: &quot; +
+    formatYesNoResponse(MAIN.ipValue.HasRpcMethods)
+);
+</code></pre>
+<p>In this example, the <code>HasRpcMethods</code> property provides a straightforward way to determine whether a given symbol, such as <code>fbValue</code> or <code>ipValue</code>, supports RPC calls. If <code>HasRpcMethods</code> returns <code>true</code>, you can proceed with further steps, such as listing and invoking available RPC methods.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="listing-available-rpc-methods"><a class="header" href="#listing-available-rpc-methods">Listing Available RPC Methods</a></h1>
+<p>You can retrieve a list of available methods using the <code>RpcMethods</code> property. This property provides an <a href="https://infosys.beckhoff.com/content/1033/tc3_ads.net/9410264843.html?id=7888281276303216541"><code>IRpcMethodCollection</code></a>, containing instances of <a href="https://infosys.beckhoff.com/content/1033/tc3_ads.net/9410254603.html?id=4575198280406047249"><code>IRpcMethod</code></a> for each RPC method available on the symbol. Each <code>IRpcMethod</code> instance provides details like the method name, parameters, return type, and additional comments, making it easy to inspect and understand the functionality of each RPC method.</p>
+<p>The following example demonstrates how to list the available RPC methods for two PLC symbols, <code>fbValue</code> and <code>ipValue</code>:</p>
+<pre><code class="language-cs">Console.WriteLine(&quot;RPC Methods for fbValue:&quot;);
+foreach (IRpcMethod method in MAIN.fbValue.RpcMethods)
+{
+    Console.WriteLine(method.Name);
+}
+
+Console.WriteLine(&quot;\nRPC Methods for ipValue:&quot;);
+foreach (IRpcMethod method in MAIN.ipValue.RpcMethods)
+{
+    Console.WriteLine(method.Name);
+}
+</code></pre>
+<h3 id="inspecting-rpc-method-parameters"><a class="header" href="#inspecting-rpc-method-parameters">Inspecting RPC Method Parameters</a></h3>
+<p>Each RPC method may have parameters, which you can inspect using the <code>Parameters</code> property of an <code>IRpcMethod</code> instance. This property provides a collection of <a href="https://infosys.beckhoff.com/content/1033/tc3_ads.net/9410275083.html?id=4592689443333571584"><code>IRpcMethodParameter</code></a> instances, where each instance represents a specific parameter with details like its name and type.</p>
+<p>For example, to view the parameters of the <code>Sum</code> method on <code>ipValue</code>, use the following code:</p>
+<pre><code class="language-cs">Console.WriteLine(&quot;\nParameters for the 'Sum' method on ipValue:&quot;);
+foreach (IRpcMethodParameter param in MAIN.ipValue.RpcMethods[&quot;Sum&quot;].Parameters)
+{
+    Console.WriteLine($&quot;Parameter Name: {param.Name}, Type: {param.TypeName}&quot;);
+}
+</code></pre>
+<p>In this example, the <code>Parameters</code> property allows you to access and display each parameter’s name and type, which is useful for understanding what inputs the RPC method expects. This step ensures that you supply the correct parameter types and values when you invoke the method.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="invoking-rpc-methods"><a class="header" href="#invoking-rpc-methods">Invoking RPC Methods</a></h1>
+<p>The ADS .NET library provides two approaches to call an RPC method: </p>
+<ol>
+<li><strong>Using the <code>InvokeRpcMethod</code> method</strong> — This method provides flexibility, especially when handling output parameters, and ensures compatibility with the RPC’s structure.</li>
+<li><strong>Direct method invocation syntax</strong> — For conciseness, if you don’t require handling output parameters.</li>
+</ol>
+<h3 id="using-invokerpcmethod"><a class="header" href="#using-invokerpcmethod">Using <code>InvokeRpcMethod</code></a></h3>
+<p>To call an RPC method using <code>InvokeRpcMethod</code>, provide the name of the RPC method, an array containing input parameters, and an optional array for output parameters. This method is suitable when you need precise control over both input and output parameters.</p>
+<pre><code class="language-cs">object[] inParams = { 1, 2 };
+object[] outParams;
+
+double result = MAIN.ipValue.InvokeRpcMethod(&quot;Sum&quot;, inParams, out outParams);
+
+Console.WriteLine($&quot;Sum result: {result}&quot;);
+Console.WriteLine($&quot;Output message: {outParams[0]}&quot;);
+</code></pre>
+<h3 id="using-direct-method-invocation-syntax"><a class="header" href="#using-direct-method-invocation-syntax">Using Direct Method Invocation Syntax</a></h3>
+<p>For a more concise call, you can use direct method invocation syntax. This approach simplifies the code, although it may not populate output parameters as expected.</p>
+<pre><code class="language-cs">string message;
+double result = MAIN.ipValue.Sum(1, 2, out message);
+
+Console.WriteLine($&quot;Sum result: {result}&quot;);
+Console.WriteLine($&quot;Output message: {message}&quot;);
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> When using direct invocation syntax, output parameters might not be populated. This may be a limitation in the ADS .NET library, so consider reaching out to Beckhoff Technical Support for clarification. If output parameter values are essential, it’s recommended to use <code>InvokeRpcMethod</code> instead for reliable handling of output data.</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h1>
+<p>As you continue to explore and work with TwinCAT ADS, remember that Beckhoff's extensive documentation and community resources are valuable allies in expanding your knowledge and troubleshooting challenges. The ADS ecosystem is continually evolving, with regular updates introducing new features and addressing limitations. Staying informed about these developments will ensure your applications remain at the forefront of industrial automation.</p>
+<p>For questions, ideas, or further discussion, feel free to use the discussions section of the GitHub repository:
+<a href="https://github.com/fisothemes/TwinCAT-ADS-Guide-in-.NET/discussions">GitHub Discussions</a></p>
+<p>If you’d like to contribute improvements to this book, please submit a pull request.</p>
+<p>If you encounter any issues, please raise a GitHub issue, and we’ll address it as soon as possible.</p>
+<p>Here are additional resources for further assistance:</p>
+<ul>
+<li><a href="https://www.linkedin.com/groups/1860933">TwinCAT Forum LinkedIn Group</a></li>
+<li><a href="https://twincontrols.com/">TwinControl Forum</a></li>
+<li><a href="https://alltwincat.com/">TwinCAT Tutorials and Articles</a></li>
+<li><a href="https://cookncode.com/twincat">CooknCode - TwinCAT Articles</a></li>
+<li><a href="https://infosys.beckhoff.com/english.php?content=../content/1033/tc3_ads.net/index.html&amp;id=3120360106606588270">TwinCAT ADS.NET V6 documentation</a></li>
+</ul>
+<p>I hope this guide has helped you get started with TwinCAT ADS in the .NET environment, and I wish you success in your future automation projects.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>

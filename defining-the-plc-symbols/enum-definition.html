@@ -1,0 +1,245 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Enum Definition - A Guide to TwinCAT ADS in .NET with Dynamic Value Manipulation</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="A technical guide to navigating TwinCAT ADS with C#/.NET, focusing on dynamic marshalling and addressing critical knowledge gaps in Beckhoff&#x27;s documentation. This book explores accessing, manipulating, and interacting with TwinCAT PLC data, enabling robust and efficient development with ADS in .NET.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../index.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../prerequisites.html"><strong aria-hidden="true">2.</strong> Prerequisites</a></li><li class="chapter-item expanded "><a href="../setting-up-the-ads-connection/index.html"><strong aria-hidden="true">3.</strong> Setting Up the ADS Connection</a></li><li class="chapter-item expanded "><a href="../defining-the-plc-symbols/index.html"><strong aria-hidden="true">4.</strong> Defining the PLC Symbols</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../defining-the-plc-symbols/enum-definition.html" class="active"><strong aria-hidden="true">4.1.</strong> Enum Definition</a></li><li class="chapter-item expanded "><a href="../defining-the-plc-symbols/struct-definition.html"><strong aria-hidden="true">4.2.</strong> Struct Definition</a></li><li class="chapter-item expanded "><a href="../defining-the-plc-symbols/interface-definition.html"><strong aria-hidden="true">4.3.</strong> Interface Definition</a></li><li class="chapter-item expanded "><a href="../defining-the-plc-symbols/function-block-definition.html"><strong aria-hidden="true">4.4.</strong> Function Block Definition</a></li></ol></li><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/index.html"><strong aria-hidden="true">5.</strong> Interacting with PLC Symbols</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/importing-required-libraries.html"><strong aria-hidden="true">5.1.</strong> Importing Required Libraries</a></li><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/loading-symbols-with-the-symbol-loader.html"><strong aria-hidden="true">5.2.</strong> Loading Symbols with the Symbol Loader</a></li><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/accessing-the-main-program-symbol.html"><strong aria-hidden="true">5.3.</strong> Accessing the MAIN Program Symbol</a></li><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/complete-code-example.html"><strong aria-hidden="true">5.4.</strong> Complete Code Example</a></li><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/index.html"><strong aria-hidden="true">5.5.</strong> Reading and Writing Values from PLC Symbols</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/primitives.html"><strong aria-hidden="true">5.5.1.</strong> Primitives</a></li><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/enums.html"><strong aria-hidden="true">5.5.2.</strong> Enums</a></li><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/arrays.html"><strong aria-hidden="true">5.5.3.</strong> Arrays</a></li><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/structs.html"><strong aria-hidden="true">5.5.4.</strong> Structs</a></li><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/function-blocks.html"><strong aria-hidden="true">5.5.5.</strong> Function Blocks</a></li></ol></li><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/handing-events/index.html"><strong aria-hidden="true">5.6.</strong> Handling Events</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/handing-events/monitoring-connection-state-changes.html"><strong aria-hidden="true">5.6.1.</strong> Monitoring Connection State Changes</a></li><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/handing-events/listening-to-ads-state-changes.html"><strong aria-hidden="true">5.6.2.</strong> Listening to ADS State Changes</a></li><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/handing-events/listening-for-value-changes.html"><strong aria-hidden="true">5.6.3.</strong> Listening for Value Changes</a></li><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/handing-events/best-practices.html"><strong aria-hidden="true">5.6.4.</strong> Best Practices</a></li></ol></li><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/remote-procedure-calls/index.html"><strong aria-hidden="true">5.7.</strong> Remote Procedure Calls (RPCs)</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/remote-procedure-calls/checking-for-rpc-methods.html"><strong aria-hidden="true">5.7.1.</strong> Checking for RPC Methods</a></li><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/remote-procedure-calls/listing-available-rpc-methods.html"><strong aria-hidden="true">5.7.2.</strong> Listing Available RPC Methods</a></li><li class="chapter-item expanded "><a href="../interacting-with-plc-symbols/remote-procedure-calls/invoking-rpc-methods.html"><strong aria-hidden="true">5.7.3.</strong> Invoking RPC Methods</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../conclusion.html"><strong aria-hidden="true">6.</strong> Conclusion</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">A Guide to TwinCAT ADS in .NET with Dynamic Value Manipulation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/fisothemes/TwinCAT-ADS-Guide-in-.NET" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/fisothemes/TwinCAT-ADS-Guide-in-.NET/tree/master/src/book/defining-the-plc-symbols/enum-definition.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="enum-definition"><a class="header" href="#enum-definition">Enum Definition</a></h1>
+<p>The <code>eValue</code> variable is an instance of type <code>E_Value</code>, an enumeration that represents seasons. Here’s its definition:</p>
+<pre><code class="language-iec-st">TYPE E_Value :
+(
+    _ := 0,
+    Summer,
+    Autumn,
+    Winter,
+    Spring
+)UINT;
+END_TYPE
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../defining-the-plc-symbols/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../defining-the-plc-symbols/struct-definition.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../defining-the-plc-symbols/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../defining-the-plc-symbols/struct-definition.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
