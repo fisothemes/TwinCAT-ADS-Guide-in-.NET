@@ -1,3 +1,5 @@
 
 # Ignore source file until sections are complete.
-src/
+src/cs/
+src/plc/
+build/

@@ -1,0 +1,11 @@
+[book]
+title = "A Guide to TwinCAT ADS in .NET with Dynamic Value Manipulation"
+description = "A technical guide to navigating TwinCAT ADS with C#/.NET, focusing on dynamic marshalling and addressing critical knowledge gaps in Beckhoff's documentation. This book explores accessing, manipulating, and interacting with TwinCAT PLC data, enabling robust and efficient development with ADS in .NET."
+authors = ["Goodwill Mzumala"]
+language = "en"
+multilingual = false
+src = "src/book"            # the directory of the source files
+
+[build]
+build-dir = "build/book"    # the directory where the output is placed
+create-missing = true      # whether or not to create missing pages
