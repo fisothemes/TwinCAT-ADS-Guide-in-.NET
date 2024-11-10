@@ -3,7 +3,7 @@
 As you continue to explore and work with TwinCAT ADS, remember that Beckhoff's extensive documentation and community resources are valuable allies in expanding your knowledge and troubleshooting challenges. The ADS ecosystem is continually evolving, with regular updates introducing new features and addressing limitations. Staying informed about these developments will ensure your applications remain at the forefront of industrial automation.
 
 For questions, ideas, or further discussion, feel free to use the discussions section of the GitHub repository:
-[GitHub Discussions](https://github.com/fisothemes/TwinCAT-ADS-Dynamic-Objects-Demo/discussions)
+[GitHub Discussions](https://github.com/fisothemes/TwinCAT-ADS-Guide-in-.NET/discussions)
 
 If you’d like to contribute improvements to this book, please submit a pull request.
 
