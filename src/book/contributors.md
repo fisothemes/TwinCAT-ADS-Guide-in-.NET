@@ -1,6 +1,6 @@
 # Contributors
 
-Here is a list of the contributors who have helped improving mdBook. Big
+Here is a list of the contributors who have helped improving this guide. Big
 shout-out to them!
 
 - [fisothemes](https://github.com/fisothemes)
