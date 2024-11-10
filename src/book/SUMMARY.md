@@ -1,6 +1,9 @@
 # Summary
 
-- [Introduction](./README.md)
+[Introduction](./README.md)
+
+# Guide
+
 - [Prerequisites](./prerequisites.md)
 - [Setting Up the ADS Connection](./setting-up-the-ads-connection/README.md)
 - [Defining the PLC Symbols](./defining-the-plc-symbols/README.md)
@@ -29,4 +32,8 @@
         - [Listing Available RPC Methods](./interacting-with-plc-symbols/remote-procedure-calls/listing-available-rpc-methods.md)
         - [Invoking RPC Methods](./interacting-with-plc-symbols/remote-procedure-calls/invoking-rpc-methods.md)
 - [Conclusion](./conclusion.md)
+
+-----------
+
+[Contributors](./contributors.md)
 
