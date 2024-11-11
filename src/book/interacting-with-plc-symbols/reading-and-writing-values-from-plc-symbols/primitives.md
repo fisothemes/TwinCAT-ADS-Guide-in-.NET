@@ -18,6 +18,6 @@ double plcDblValue = MAIN.fValue.ReadValue();
 To modify these values, use `WriteValue()` as shown below:
 
 ```cs
-MAIN.nValue.WriteValue(88);
+MAIN.nValue.WriteValue(888);
 MAIN.fValue.WriteValue(6.626);
 ```
