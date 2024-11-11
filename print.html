@@ -196,38 +196,38 @@
 </ul>
 <p>I hope by the end of this book, you'll be able to access, control, and manipulate your PLC data in a straightforward and accessible way, so you can focus on building robust, adaptable, high-performance applications.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h1>
-<p>To make full use of this book, ensure you have the following installed and configured:</p>
+<p>To make full use of this guide, ensure you have the following installed and configured:</p>
 <ol>
 <li>
-<p><strong>The Beckhoff TwinCAT XAE (eXtended Automation Engineering) or XAR (eXtended Automation Runtime)</strong> – Necessary for configuring and deploying PLC applications. Both can be downloaded from the <a href="https://www.beckhoff.com/en-en/support/download-finder/">Beckhoff download finder</a> webpage.</p>
+<p><strong>The Beckhoff TwinCAT XAE (eXtended Automation Engineering) or XAR (eXtended Automation Runtime)</strong> – Essential for configuring and deploying PLC applications. Both can be downloaded from the <a href="https://www.beckhoff.com/en-en/support/download-finder/">Beckhoff download finder</a> webpage.</p>
 </li>
 <li>
-<p><strong><a href="https://dotnet.microsoft.com/en-us/download/dotnet">Microsoft .NET SDK 8.0</a></strong> – Provides the tools and libraries for developing and running .NET applications. You can install it with <code>winget</code> by running:</p>
+<p><strong><a href="https://dotnet.microsoft.com/en-us/download/dotnet">Microsoft .NET SDK 8.0</a></strong> – Provides the tools and libraries for developing and running .NET applications. To install it via <code>winget</code>, run:</p>
 <pre><code class="language-ps">winget install Microsoft.DotNet.SDK.8
 </code></pre>
 </li>
 <li>
-<p><strong>An IDE for C# Development</strong> – For this book I used Visual Studio Code with the <a href="https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp">C# extension</a> and the .NET CLI. If you are new to this setup, you can refer to the <a href="https://code.visualstudio.com/docs/languages/dotnet">Visual Studio Code .NET documentation</a> for additional guidance.</p>
+<p><strong>An IDE for C# Development</strong> – For this book, I used Visual Studio Code with the <a href="https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp">C# extension</a> and the .NET CLI. If you’re new to this setup, please refer to the <a href="https://code.visualstudio.com/docs/languages/dotnet">Visual Studio Code .NET documentation</a> for additional guidance.</p>
 <p>To get started with the .NET CLI in your chosen directory, you can create a new console application with:</p>
 <pre><code class="language-ps">dotnet new console -n &lt;ProjectName&gt;
 </code></pre>
-<p>For a list of available project templates:</p>
+<p>Use the following command to explore additional project templates:</p>
 <pre><code class="language-ps">dotnet new list
 </code></pre>
-<p>To build and run your project:</p>
+<p>To build and run your project, use:</p>
 <pre><code class="language-ps">dotnet run
 </code></pre>
 <p>A comprehensive guide to the .NET CLI can be found <a href="https://learn.microsoft.com/en-us/dotnet/core/tools/">here</a>.</p>
 </li>
 <li>
-<p><strong><a href="https://www.nuget.org/packages/Beckhoff.TwinCAT.Ads">Beckhoff TwinCAT ADS NuGet Package</a></strong> – This package allows you to establish an ADS connection to the PLC.</p>
-<p>Install it by running this command in your project root directory:</p>
+<p><strong><a href="https://www.nuget.org/packages/Beckhoff.TwinCAT.Ads">Beckhoff TwinCAT ADS NuGet Package</a></strong> – This package allows you to establish an ADS connection to your device.</p>
+<p>Install it by running this command in your project’s root directory:</p>
 <pre><code class="language-ps">dotnet add package Beckhoff.TwinCAT.Ads
 </code></pre>
 </li>
 <li>
-<p><strong><a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json NuGet Package</a></strong> – This package is used for JSON serialisation of dynamic objects, which is particularly helpful for displaying complex symbol values in a structured format. </p>
-<p>You can install it by running this command in your project's root directory:</p>
+<p><strong><a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json NuGet Package</a></strong> – This package is used for JSON serialisation of dynamic objects, which is particularly helpful for displaying complex symbol values in a structured format.</p>
+<p>Install it by running this command in your project’s root directory:</p>
 <pre><code class="language-ps">dotnet add package Newtonsoft.Json
 </code></pre>
 </li>
