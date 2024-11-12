@@ -180,7 +180,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="setting-up-the-ads-connection"><a class="header" href="#setting-up-the-ads-connection">Setting Up the ADS Connection</a></h1>
-<p>To start, let’s establish a connection to the PLC. The code below assumes you have an active TwinCAT project ready to connect with. For this guide, I recommend creating a new .NET project for simplicity, then pasting the code below into your <code>Program.cs</code> file (or whichever file contains your entry point).</p>
+<p>To begin, let’s establish a connection to the PLC. The code below assumes you have an active TwinCAT project ready to connect.For simplicity, I recommend creating a new .NET project, then pasting the code below into your <code>Program.cs</code> file (or whichever file contains your entry point).</p>
 <pre><code class="language-cs">using TwinCAT.Ads;
 
 using (AdsClient client = new())
@@ -196,7 +196,7 @@ using (AdsClient client = new())
     Console.ReadKey(true);
 }
 </code></pre>
-<p>This code should produce output similar to the following when run:</p>
+<p>This code should produce an output similar to the following when run:</p>
 <pre><code class="language-console">Hello there!
 You're connected to 192.168.137.1.1.1:851 from 192.168.137.1.1.1:XXXXX.
 The current state of the PLC is: Run.

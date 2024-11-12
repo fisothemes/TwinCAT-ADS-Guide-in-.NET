@@ -180,11 +180,18 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="function-block-definition"><a class="header" href="#function-block-definition">Function Block Definition</a></h1>
-<p>The <code>fbValue</code> variable is an instance of the function block <code>FB_Value</code> which implements the <code>I_Value</code> interface. This function block demonstrates remote procedure calls (RPC) and property access through ADS. </p>
+<p>The <code>fbValue</code> variable is an instance of the function block <code>FB_Value</code> which implements the <code>I_Value</code> interface. This function block will be used to demonstrate remote procedure calls (RPC) and property access through ADS. </p>
 <p>The function block <code>FB_Value</code> includes:</p>
 <ul>
-<li>An <strong>RPC method</strong> called <code>Sum</code> that calculates the sum of two <code>LREAL</code> inputs and returns both the sum and a descriptive string message.</li>
-<li>A <strong>property</strong> called <code>Value</code> that can be accessed and modified remotely. This property uses the <code>{attribute 'monitoring' := 'call'}</code> pragma to allow read and write operations over ADS, though note that this feature isn’t supported on Windows CE-based PLCs.</li>
+<li>
+<p>An <strong>RPC method</strong> called <code>Sum</code> that calculates the sum of two <code>LREAL</code> inputs and returns both the sum and a descriptive string message.</p>
+</li>
+<li>
+<p>A <strong>property</strong> called <code>Value</code> that can be accessed and modified remotely. This property uses the <code>{attribute 'monitoring' := 'call'}</code> pragma to allow read and write operations over ADS.</p>
+<blockquote>
+<p><strong>Note:</strong> This feature isn’t supported on Windows CE-based devices.</p>
+</blockquote>
+</li>
 </ul>
 <p>Below is the full implementation of <code>FB_Value</code>:</p>
 <pre><code class="language-iec-st">FUNCTION_BLOCK FB_Value IMPLEMENTS I_Value
@@ -221,7 +228,7 @@ END_PROPERTY
 END_FUNCTION_BLOCK
 </code></pre>
 <ul>
-<li><strong>Method: <code>Sum</code></strong>: This RPC-enabled method takes two <code>LREAL</code> parameters (<code>fA</code> and <code>fB</code>) as input and returns their sum. The output <code>sMessage</code> provides a summary of the calculation in text format, giving both the input values and the result.</li>
+<li><strong>Method: <code>Sum</code></strong>: This RPC-enabled method takes two <code>LREAL</code> parameters (<code>fA</code> and <code>fB</code>) as inputs and returns their sum. The output <code>sMessage</code> provides a summary of the calculation in text format, giving both the input values and the result.</li>
 <li><strong>Property: <code>Value</code></strong>: This property provides controlled access to the internal <code>_fValue</code> variable. In the <code>GET</code> accessor, it simply returns the current <code>_fValue</code>. In the <code>SET</code> accessor, it doubles the input value before storing it back into <code>_fValue</code>.</li>
 </ul>
 

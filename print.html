@@ -233,7 +233,7 @@
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="setting-up-the-ads-connection"><a class="header" href="#setting-up-the-ads-connection">Setting Up the ADS Connection</a></h1>
-<p>To start, let’s establish a connection to the PLC. The code below assumes you have an active TwinCAT project ready to connect with. For this guide, I recommend creating a new .NET project for simplicity, then pasting the code below into your <code>Program.cs</code> file (or whichever file contains your entry point).</p>
+<p>To begin, let’s establish a connection to the PLC. The code below assumes you have an active TwinCAT project ready to connect.For simplicity, I recommend creating a new .NET project, then pasting the code below into your <code>Program.cs</code> file (or whichever file contains your entry point).</p>
 <pre><code class="language-cs">using TwinCAT.Ads;
 
 using (AdsClient client = new())
@@ -249,7 +249,7 @@ using (AdsClient client = new())
     Console.ReadKey(true);
 }
 </code></pre>
-<p>This code should produce output similar to the following when run:</p>
+<p>This code should produce an output similar to the following when run:</p>
 <pre><code class="language-console">Hello there!
 You're connected to 192.168.137.1.1.1:851 from 192.168.137.1.1.1:XXXXX.
 The current state of the PLC is: Run.
@@ -259,7 +259,7 @@ Press any key to exit...
 <p>This code connects to the PLC on the local AMS Net ID with port <code>851</code>. It displays the connection details, including the PLC state, which should confirm a successful connection if everything is set up correctly. Pressing any key will then terminate the application. </p>
 <p>This setup gives you a basic foundation for communicating with your PLC through ADS in .NET.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="defining-the-plc-symbols"><a class="header" href="#defining-the-plc-symbols">Defining the PLC Symbols</a></h1>
-<p>Now that we’ve established a connection to the PLC, let's look at the symbols we’ll be working with in this book. </p>
+<p>Now that we’ve established a connection to the PLC, let's examine the symbols we’ll be working with in this book.</p>
 <p>The <strong><code>MAIN</code></strong> program in the TwinCAT project is defined as follows:</p>
 <pre><code class="language-iec-st">PROGRAM MAIN
 VAR
@@ -272,7 +272,7 @@ VAR
     ipValue : I_Value               := fbValue; 
 END_VAR
 </code></pre>
-<p>We’ll be interacting with four symbols, each representing different data types and complexities:</p>
+<p>In this book, we’ll be interacting with a variety of symbols, each representing different data types and complexities, including:</p>
 <ol>
 <li><strong><code>nValue</code></strong>: A basic integer type.</li>
 <li><strong><code>fValue</code></strong>: A floating-point value (LREAL).</li>
@@ -320,11 +320,18 @@ END_INTERFACE
 </code></pre>
 <p>The <code>Sum</code> method is enabled for RPC through the <code>{attribute 'TcRpcEnable'}</code> pragma, allowing it to be called remotely via ADS. This method takes two <code>LREAL</code> inputs and returns a sum along with a descriptive message in <code>sMessage</code>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="function-block-definition"><a class="header" href="#function-block-definition">Function Block Definition</a></h1>
-<p>The <code>fbValue</code> variable is an instance of the function block <code>FB_Value</code> which implements the <code>I_Value</code> interface. This function block demonstrates remote procedure calls (RPC) and property access through ADS. </p>
+<p>The <code>fbValue</code> variable is an instance of the function block <code>FB_Value</code> which implements the <code>I_Value</code> interface. This function block will be used to demonstrate remote procedure calls (RPC) and property access through ADS. </p>
 <p>The function block <code>FB_Value</code> includes:</p>
 <ul>
-<li>An <strong>RPC method</strong> called <code>Sum</code> that calculates the sum of two <code>LREAL</code> inputs and returns both the sum and a descriptive string message.</li>
-<li>A <strong>property</strong> called <code>Value</code> that can be accessed and modified remotely. This property uses the <code>{attribute 'monitoring' := 'call'}</code> pragma to allow read and write operations over ADS, though note that this feature isn’t supported on Windows CE-based PLCs.</li>
+<li>
+<p>An <strong>RPC method</strong> called <code>Sum</code> that calculates the sum of two <code>LREAL</code> inputs and returns both the sum and a descriptive string message.</p>
+</li>
+<li>
+<p>A <strong>property</strong> called <code>Value</code> that can be accessed and modified remotely. This property uses the <code>{attribute 'monitoring' := 'call'}</code> pragma to allow read and write operations over ADS.</p>
+<blockquote>
+<p><strong>Note:</strong> This feature isn’t supported on Windows CE-based devices.</p>
+</blockquote>
+</li>
 </ul>
 <p>Below is the full implementation of <code>FB_Value</code>:</p>
 <pre><code class="language-iec-st">FUNCTION_BLOCK FB_Value IMPLEMENTS I_Value
@@ -361,12 +368,12 @@ END_PROPERTY
 END_FUNCTION_BLOCK
 </code></pre>
 <ul>
-<li><strong>Method: <code>Sum</code></strong>: This RPC-enabled method takes two <code>LREAL</code> parameters (<code>fA</code> and <code>fB</code>) as input and returns their sum. The output <code>sMessage</code> provides a summary of the calculation in text format, giving both the input values and the result.</li>
+<li><strong>Method: <code>Sum</code></strong>: This RPC-enabled method takes two <code>LREAL</code> parameters (<code>fA</code> and <code>fB</code>) as inputs and returns their sum. The output <code>sMessage</code> provides a summary of the calculation in text format, giving both the input values and the result.</li>
 <li><strong>Property: <code>Value</code></strong>: This property provides controlled access to the internal <code>_fValue</code> variable. In the <code>GET</code> accessor, it simply returns the current <code>_fValue</code>. In the <code>SET</code> accessor, it doubles the input value before storing it back into <code>_fValue</code>.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="interacting-with-plc-symbols"><a class="header" href="#interacting-with-plc-symbols">Interacting with PLC Symbols</a></h1>
-<p>After defining the symbols we can now begin interacting with them in C# .NET.</p>
-<p>In this section, we’ll leverage the <a href="https://learn.microsoft.com/en-us/dotnet/framework/reflection-and-codedom/dynamic-language-runtime-overview">.NET Dynamic Language Runtime (DLR)</a> to create dynamic objects that represent each PLC symbol. These generated objects mirror the structure and data of the symbols on the PLC, including standard IEC61131 types defined in the PLC. For instance, the PLC symbol <code>&quot;MAIN.nValue&quot;</code> is accessed as <code>MAIN.nValue</code> in C#, allowing seamless interaction with your PLC's variables.</p>
+<p>Now that we’ve defined the symbols, we can begin interacting with them in C# .NET.</p>
+<p>In this section, we’ll use the <a href="https://learn.microsoft.com/en-us/dotnet/framework/reflection-and-codedom/dynamic-language-runtime-overview">.NET Dynamic Language Runtime (DLR)</a> to create dynamic objects representing each PLC symbol. These objects mirror the structure and data of the symbols on the PLC, including standard IEC 61131 types. For example, the PLC symbol <code>&quot;MAIN.nValue&quot;</code> can be accessed as <code>MAIN.nValue</code> in C#, allowing straightforward interaction with your PLC’s variables.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="importing-required-libraries"><a class="header" href="#importing-required-libraries">Importing Required Libraries</a></h1>
 <p>Before we begin we’ll need to import several essential libraries. These libraries provide tools for establishing ADS communication, loading symbols dynamically, managing the PLC’s symbol system, and handling JSON data if required.</p>
 <p>Below are the required imports:</p>
