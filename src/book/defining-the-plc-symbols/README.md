@@ -1,6 +1,6 @@
 # Defining the PLC Symbols
 
-Now that we’ve established a connection to the PLC, let's look at the symbols we’ll be working with in this book. 
+Now that we’ve established a connection to the PLC, let's examine the symbols we’ll be working with in this book.
 
 The **`MAIN`** program in the TwinCAT project is defined as follows:
 ```iec-st
@@ -16,12 +16,12 @@ VAR
 END_VAR
 ```
 
-We’ll be interacting with four symbols, each representing different data types and complexities:
+In this book, we’ll be interacting with a variety of symbols, each representing different data types and complexities, including:
 
 1. **`nValue`**: A basic integer type.
-2. **`fValue`**: A floating-point value (LREAL).
-3. **`eValue`**: An enumeration.
-4. **`arValue`**: An array containing floating-point numbers (LREAL).
-5. **`stValue`**: A structured type that we’ll define below.
-6. **`fbValue`**: A function block that includes an RPC method and a property.
-7. **`ipValue`**: An interface that includes an RPC method.
+1. **`fValue`**: A floating-point value (LREAL).
+1. **`eValue`**: An enumeration.
+1. **`arValue`**: An array containing floating-point numbers (LREAL).
+1. **`stValue`**: A structured type that we’ll define below.
+1. **`fbValue`**: A function block that includes an RPC method and a property.
+1. **`ipValue`**: An interface that includes an RPC method.
