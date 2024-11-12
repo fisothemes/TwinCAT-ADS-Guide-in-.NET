@@ -1,6 +1,6 @@
 # Setting Up the ADS Connection
 
-To start, let’s establish a connection to the PLC. The code below assumes you have an active TwinCAT project ready to connect with. For this guide, I recommend creating a new .NET project for simplicity, then pasting the code below into your `Program.cs` file (or whichever file contains your entry point).
+To begin, let’s establish a connection to the PLC. The code below assumes you have an active TwinCAT project ready to connect.For simplicity, I recommend creating a new .NET project, then pasting the code below into your `Program.cs` file (or whichever file contains your entry point).
 
 ```cs
 using TwinCAT.Ads;
@@ -19,7 +19,7 @@ using (AdsClient client = new())
 }
 ```
 
-This code should produce output similar to the following when run:
+This code should produce an output similar to the following when run:
 ```console
 Hello there!
 You're connected to 192.168.137.1.1.1:851 from 192.168.137.1.1.1:XXXXX.
