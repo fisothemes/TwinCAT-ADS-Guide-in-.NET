@@ -21,6 +21,7 @@
         - [Enums](./interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/enums.md)
         - [Arrays](./interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/arrays.md)
         - [Structs](./interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/structs.md)
+        - [Pointers](./interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/pointers.md)
         - [Function Blocks](./interacting-with-plc-symbols/reading-and-writing-values-from-plc-symbols/function-blocks.md)
     - [Handling Events](./interacting-with-plc-symbols/handing-events/README.md)
         - [Monitoring Connection State Changes](./interacting-with-plc-symbols/handing-events/monitoring-connection-state-changes.md)

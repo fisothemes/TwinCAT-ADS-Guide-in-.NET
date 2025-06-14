@@ -11,6 +11,7 @@ VAR
     eValue  : E_Value               := E_Value.Winter;
     arValue : ARRAY[0..2] OF LREAL  := [273.15, 2.71, 9.80665];
     stValue : ST_Value              := (bValue := TRUE, sValue := 'Hello there!');
+    pValue  : POINTER TO LREAL      := ADR(fValue);
     fbValue : FB_Value;
     ipValue : I_Value               := fbValue; 
 END_VAR
@@ -23,5 +24,6 @@ In this book, we’ll be interacting with a variety of symbols, each representin
 1. **`eValue`**: An enumeration.
 1. **`arValue`**: An array containing floating-point numbers (LREAL).
 1. **`stValue`**: A structured type that we’ll define below.
+1. **`pValue`**: A pointer to a floating-point value (LREAL).
 1. **`fbValue`**: A function block that includes an RPC method and a property.
 1. **`ipValue`**: An interface that includes an RPC method.
